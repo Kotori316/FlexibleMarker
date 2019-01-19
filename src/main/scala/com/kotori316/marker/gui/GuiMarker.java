@@ -20,17 +20,13 @@ public class GuiMarker extends GuiContainer {
     @Override
     public void initGui() {
         super.initGui();
-        String[] mp = {"-", "+"};
-        int index = 0;
-        for (int i = 0; i < 4; i++) {
-            buttonList.add(new GuiButton(index, guiLeft + 17 + 35 * i, guiTop + 20, 10, 20, mp[index++ % 2]));
-            buttonList.add(new GuiButton(index, guiLeft + 42 + 35 * i, guiTop + 20, 10, 20, mp[index++ % 2]));
+        String[] mp = {"--", "-", "+", "++"};
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < mp.length; j++) {
+                buttonList.add(new GuiButton(j + mp.length * i,
+                    guiLeft + 8 + 10 * j + 48 * i, guiTop + 52, 10, 20, mp[j]));
+            }
         }
-        for (int i = 0; i < 2; i++) {
-            buttonList.add(new GuiButton(index, guiLeft + 52 + 35 * i, guiTop + 45, 10, 20, mp[index++ % 2]));
-            buttonList.add(new GuiButton(index, guiLeft + 77 + 35 * i, guiTop + 45, 10, 20, mp[index++ % 2]));
-        }
-        assert index >= 0; // dummy use
     }
 
     @Override

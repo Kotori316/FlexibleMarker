@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.kotori316.marker.gui.GuiHandler;
+import com.kotori316.marker.packet.PacketHandler;
 
 @Mod(modid = Marker.modID, name = Marker.ModName, version = "${version}", certificateFingerprint = "@FINGERPRINT@")
 public class Marker {
@@ -34,6 +35,7 @@ public class Marker {
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(instance);
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+        PacketHandler.init();
     }
 
     @Mod.InstanceFactory

@@ -9,12 +9,21 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import com.kotori316.marker.Marker;
+import com.kotori316.marker.TileFlexMarker;
+import com.kotori316.marker.packet.ButtonMessage;
+import com.kotori316.marker.packet.PacketHandler;
 
 public class GuiMarker extends GuiContainer {
     private static final ResourceLocation LOCATION = new ResourceLocation(Marker.modID, "textures/gui/marker.png");
+    private static final String[] upSide = {"UP"};
+    private static final String[] center = {"Left", "Forward", "Right"};
+    private static final String[] downSide = {"Down"};
+    private static final int[] amounts = {-16, -1, 1, 16};
+    private final TileFlexMarker marker;
 
-    public GuiMarker(EntityPlayer player) {
+    public GuiMarker(EntityPlayer player, TileFlexMarker marker) {
         super(new ContainerMarker(player));
+        this.marker = marker;
         //217, 188
         this.xSize = 217;
         this.ySize = 188;
@@ -24,9 +33,6 @@ public class GuiMarker extends GuiContainer {
     public void initGui() {
         super.initGui();
         String[] mp = {"--", "-", "+", "++"};
-        String[] upSide = {"UP"};
-        String[] center = {"Left", "Forward", "Right"};
-        String[] downSide = {"Down"};
         int index = 0;
         int w = 10;
         int h = 20;
@@ -66,5 +72,8 @@ public class GuiMarker extends GuiContainer {
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
+        TileFlexMarker.Movable movable = TileFlexMarker.Movable.valueOf(button.id / 4);
+        ButtonMessage message = new ButtonMessage(marker.getPos(), marker.getWorld().provider.getDimension(), movable, amounts[button.id % 4]);
+        PacketHandler.sendToServer(message);
     }
 }

@@ -30,7 +30,7 @@ public class GuiHandler implements IGuiHandler {
     public GuiScreen getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity entity = world.getTileEntity(new BlockPos(x, y, z));
         if (entity instanceof TileFlexMarker && ID == Marker_ID) {
-            return new GuiMarker(player);
+            return new GuiMarker(player, (TileFlexMarker) entity);
         }
         return null;
     }

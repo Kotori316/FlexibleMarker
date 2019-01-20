@@ -36,20 +36,21 @@ public class GuiMarker extends GuiContainer {
         int index = 0;
         int w = 10;
         int h = 20;
+        int top = 16;
 
         for (int i = 0; i < upSide.length; i++) {
             for (int j = 0; j < mp.length; j++) {
-                buttonList.add(new GuiButton(index++, guiLeft + xSize / 2 - 4 * w * upSide.length / 2 + i * w * mp.length + w * j, guiTop + 8, w, h, mp[j]));
+                buttonList.add(new GuiButton(index++, guiLeft + xSize / 2 - 4 * w * upSide.length / 2 + i * w * mp.length + w * j, guiTop + top, w, h, mp[j]));
             }
         }
         for (int i = 0; i < center.length; i++) {
             for (int j = 0; j < mp.length; j++) {
-                buttonList.add(new GuiButton(index++, guiLeft + xSize / 2 - 4 * w * center.length / 2 + i * w * mp.length + w * j, guiTop + 43, w, h, mp[j]));
+                buttonList.add(new GuiButton(index++, guiLeft + xSize / 2 - 4 * w * center.length / 2 + i * w * mp.length + w * j, guiTop + top + 35, w, h, mp[j]));
             }
         }
         for (int i = 0; i < downSide.length; i++) {
             for (int j = 0; j < mp.length; j++) {
-                buttonList.add(new GuiButton(index++, guiLeft + xSize / 2 - 4 * w * downSide.length / 2 + i * w * mp.length + w * j, guiTop + 78, w, h, mp[j]));
+                buttonList.add(new GuiButton(index++, guiLeft + xSize / 2 - 4 * w * downSide.length / 2 + i * w * mp.length + w * j, guiTop + top + 70, w, h, mp[j]));
             }
         }
 
@@ -67,6 +68,20 @@ public class GuiMarker extends GuiContainer {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(LOCATION);
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        String s = TileFlexMarker.Movable.UP.name();
+        fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6, 0x404040);
+        s = TileFlexMarker.Movable.FORWARD.name();
+        fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6 + 35, 0x404040);
+        s = TileFlexMarker.Movable.LEFT.name();
+        fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2 - 40, 6 + 35, 0x404040);
+        s = TileFlexMarker.Movable.RIGHT.name();
+        fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2 + 40, 6 + 35, 0x404040);
+        s = TileFlexMarker.Movable.DOWN.name();
+        fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6 + 70, 0x404040);
     }
 
     @Override

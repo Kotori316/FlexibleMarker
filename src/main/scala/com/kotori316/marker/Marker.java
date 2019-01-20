@@ -10,6 +10,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -19,6 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.kotori316.marker.gui.GuiHandler;
 import com.kotori316.marker.packet.PacketHandler;
+import com.kotori316.marker.render.RenderMarker;
 
 @Mod(modid = Marker.modID, name = Marker.ModName, version = "${version}", certificateFingerprint = "@FINGERPRINT@")
 public class Marker {
@@ -36,6 +38,9 @@ public class Marker {
         MinecraftForge.EVENT_BUS.register(getInstance());
         NetworkRegistry.INSTANCE.registerGuiHandler(getInstance(), new GuiHandler());
         PacketHandler.init();
+        if (event.getSide() == Side.CLIENT) {
+            ClientRegistry.bindTileEntitySpecialRenderer(TileFlexMarker.class, RenderMarker.getInstance());
+        }
     }
 
     @Mod.InstanceFactory

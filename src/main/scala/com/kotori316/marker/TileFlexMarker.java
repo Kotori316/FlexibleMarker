@@ -1,8 +1,11 @@
 package com.kotori316.marker;
 
+import java.util.Optional;
+
 import buildcraft.api.tiles.ITileAreaProvider;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 @net.minecraftforge.fml.common.Optional.Interface(modid = "BuildCraftAPI|core", iface = "buildcraft.api.tiles.ITileAreaProvider")
@@ -10,11 +13,13 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider {
 
     private BlockPos min = BlockPos.ORIGIN;
     private BlockPos max = BlockPos.ORIGIN;
+    public EnumFacing direction;
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setLong("min", min.toLong());
         compound.setLong("max", max.toLong());
+        compound.setString("direction", Optional.ofNullable(direction).map(EnumFacing::toString).orElse(""));
         return super.writeToNBT(compound);
     }
 
@@ -23,6 +28,7 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider {
         super.readFromNBT(compound);
         min = BlockPos.fromLong(compound.getLong("min"));
         max = BlockPos.fromLong(compound.getLong("max"));
+        direction = EnumFacing.byName(compound.getString("direction"));
     }
 
     @Override

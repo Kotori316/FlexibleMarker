@@ -25,7 +25,7 @@ public class Marker {
     public static final String modID = "flexiblemarker";
     public static final String ModName = "FlexibleMarker";
     public static final BlockMarker blockMarker = new BlockMarker();
-    public static final Marker instance;
+    private static final Marker instance;
 
     static {
         instance = new Marker();
@@ -33,8 +33,8 @@ public class Marker {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(instance);
-        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+        MinecraftForge.EVENT_BUS.register(getInstance());
+        NetworkRegistry.INSTANCE.registerGuiHandler(getInstance(), new GuiHandler());
         PacketHandler.init();
     }
 

@@ -15,6 +15,9 @@ public class GuiMarker extends GuiContainer {
 
     public GuiMarker(EntityPlayer player) {
         super(new ContainerMarker(player));
+        //217, 188
+        this.xSize = 217;
+        this.ySize = 188;
     }
 
     @Override

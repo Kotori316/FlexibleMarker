@@ -4,3 +4,5 @@ run
 build
 *.iml
 *.ipr
+gradle
+gradlew.bat

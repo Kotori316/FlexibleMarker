@@ -324,9 +324,8 @@ object Box {
     }
   }
 
-  protected def normalY(x: Double, y: Double, z: Double): Double = {
-    -(x * x + z * z) / y
-  }
+  @inline
+  protected def normalY(x: Double, y: Double, z: Double): Double = -(x * x + z * z) / y
 
   case class LightValue(l1: Int, l2: Int)
 

@@ -24,12 +24,29 @@ public class GuiMarker extends GuiContainer {
     public void initGui() {
         super.initGui();
         String[] mp = {"--", "-", "+", "++"};
-        for (int i = 0; i < 5; i++) {
+        String[] upSide = {"UP"};
+        String[] center = {"Left", "Forward", "Right"};
+        String[] downSide = {"Down"};
+        int index = 0;
+        int w = 10;
+        int h = 20;
+
+        for (int i = 0; i < upSide.length; i++) {
             for (int j = 0; j < mp.length; j++) {
-                buttonList.add(new GuiButton(j + mp.length * i,
-                    guiLeft + 8 + 10 * j + 48 * i, guiTop + 52, 10, 20, mp[j]));
+                buttonList.add(new GuiButton(index++, guiLeft + xSize / 2 - 4 * w * upSide.length / 2 + i * w * mp.length + w * j, guiTop + 8, w, h, mp[j]));
             }
         }
+        for (int i = 0; i < center.length; i++) {
+            for (int j = 0; j < mp.length; j++) {
+                buttonList.add(new GuiButton(index++, guiLeft + xSize / 2 - 4 * w * center.length / 2 + i * w * mp.length + w * j, guiTop + 43, w, h, mp[j]));
+            }
+        }
+        for (int i = 0; i < downSide.length; i++) {
+            for (int j = 0; j < mp.length; j++) {
+                buttonList.add(new GuiButton(index++, guiLeft + xSize / 2 - 4 * w * downSide.length / 2 + i * w * mp.length + w * j, guiTop + 78, w, h, mp[j]));
+            }
+        }
+
     }
 
     @Override

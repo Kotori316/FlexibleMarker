@@ -156,6 +156,14 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
         min = BlockPos.fromLong(compound.getLong("min"));
         max = BlockPos.fromLong(compound.getLong("max"));
         direction = EnumFacing.byName(compound.getString("direction"));
+        if (hasWorld()) {
+            setRender();
+        }
+    }
+
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        return super.serializeNBT();
     }
 
     @Override

@@ -1,4 +1,4 @@
-# FlexibleMarker
+# FlexibleMarker for Minecraft 1.12.2
 Add a BuildCraft marker with GUI.
 
 ### APIs

@@ -15,7 +15,7 @@ import com.kotori316.marker.TileFlexMarker;
 
 public class RenderMarker extends FastTESR<TileFlexMarker> {
     private static RenderMarker ourInstance = new RenderMarker();
-    private TextureAtlasSprite sprite;
+    private TextureAtlasSprite spriteRed, spriteBlue;
 
     public static RenderMarker getInstance() {
         return ourInstance;
@@ -33,14 +33,18 @@ public class RenderMarker extends FastTESR<TileFlexMarker> {
         buffer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
         if (te.boxes != null) {
             for (Box box : te.boxes) {
-                box.render(buffer, sprite);
+                box.render(buffer, spriteRed);
             }
+        }
+        if (te.directionBox != null) {
+            te.directionBox.render(buffer, spriteBlue);
         }
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
     @SubscribeEvent
-    public void registerTexture(TextureStitchEvent.Pre event){
-        sprite = event.getMap().registerSprite(new ResourceLocation(Marker.modID, "blocks/red"));
+    public void registerTexture(TextureStitchEvent.Pre event) {
+        spriteRed = event.getMap().registerSprite(new ResourceLocation(Marker.modID, "blocks/red"));
+        spriteBlue = event.getMap().registerSprite(new ResourceLocation(Marker.modID, "blocks/blue"));
     }
 }

@@ -14,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -27,6 +28,8 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     private BlockPos max = BlockPos.ORIGIN;
     @Nullable
     public Box[] boxes;
+    @Nullable
+    public Box directionBox;
     public EnumFacing direction;
 
     public void init(EnumFacing facing) {
@@ -140,6 +143,13 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
         boxes = Arrays.stream(lineBoxes).filter(Objects::nonNull)
             .map(range -> Box.apply(range, 1d / 8d, 1d / 8d, 1d / 8d, false, false))
             .toArray(Box[]::new);
+        AxisAlignedBB bb;
+        if (direction.getAxis() == EnumFacing.Axis.X) {
+            bb = new AxisAlignedBB(getPos().getX() - c + a, getPos().getY() + a, getPos().getZ() + a, getPos().getX() + c + a, getPos().getY() + a, getPos().getZ() + a);
+        } else {
+            bb = new AxisAlignedBB(getPos().getX() + a, getPos().getY() + a, getPos().getZ() - c + a, getPos().getX() + a, getPos().getY() + a, getPos().getZ() + c + a);
+        }
+        directionBox = Box.apply(bb.offset(new Vec3d(direction.getDirectionVec()).scale(a)), 1d / 8d, 1d / 8d, 1d / 8d, true, true);
     }
 
     @Override

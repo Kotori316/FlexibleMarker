@@ -33,7 +33,7 @@ public class RenderMarker extends FastTESR<TileFlexMarker> {
         buffer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
         if (te.boxes != null) {
             for (Box box : te.boxes) {
-                box.render(buffer, sprite, 255, 255, 255, 255, new Box.LightValue(240, 0));
+                box.render(buffer, sprite);
             }
         }
         Minecraft.getMinecraft().mcProfiler.endSection();

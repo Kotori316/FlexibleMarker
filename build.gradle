@@ -15,7 +15,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 
 version = "1.0"
-group = "com.yogpc.qp" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "com.kotori316" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Marker"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
@@ -87,8 +87,6 @@ processResources {
 
 jar {
     classifier = 'universal'
-    from sourceSets.main.output
-    exclude("*.md")
 }
 
 task signJar(type: SignJar, dependsOn: reobfJar) {

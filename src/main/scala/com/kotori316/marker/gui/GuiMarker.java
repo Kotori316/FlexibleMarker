@@ -5,6 +5,7 @@ import java.io.IOException;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
@@ -72,15 +73,15 @@ public class GuiMarker extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String s = TileFlexMarker.Movable.UP.name();
+        String s = I18n.format(TileFlexMarker.Movable.UP.transName);
         fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6, 0x404040);
-        s = TileFlexMarker.Movable.FORWARD.name();
+        s = I18n.format(TileFlexMarker.Movable.FORWARD.transName);
         fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6 + 35, 0x404040);
-        s = TileFlexMarker.Movable.LEFT.name();
+        s = I18n.format(TileFlexMarker.Movable.LEFT.transName);
         fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2 - 40, 6 + 35, 0x404040);
-        s = TileFlexMarker.Movable.RIGHT.name();
+        s = I18n.format(TileFlexMarker.Movable.RIGHT.transName);
         fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2 + 40, 6 + 35, 0x404040);
-        s = TileFlexMarker.Movable.DOWN.name();
+        s = I18n.format(TileFlexMarker.Movable.DOWN.transName);
         fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6 + 70, 0x404040);
     }
 

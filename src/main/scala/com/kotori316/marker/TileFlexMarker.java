@@ -2,6 +2,7 @@ package com.kotori316.marker;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
@@ -42,31 +43,11 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
         setRender();
     }
 
+    @SuppressWarnings("Duplicates")
     public void move(Movable movable, int amount) {
         EnumFacing facing = movable.getActualFacing(direction);
         BlockPos offset = getPos();
-        if (facing.getAxis() == EnumFacing.Axis.Y) {
-            if (facing == EnumFacing.UP) {
-                max = max.offset(facing, amount);
-                int d = getDistance(max, offset, facing.getAxis());
-                if (d > 64) {
-                    max = getLimited(max, offset, facing, 64);
-                } else if (d < 0) {
-                    max = getLimited(max, offset, facing, 0);
-                }
-            } else {
-                min = min.offset(facing, amount);
-                int d = getDistance(offset, min, facing.getAxis());
-                if (d > 64) {
-                    min = getLimited(min, offset, facing, 64);
-                } else if (d < 0) {
-                    min = getLimited(min, offset, facing, 0);
-                }
-                if (min.getY() < 0) {
-                    min = new BlockPos(min.getX(), 0, min.getZ());
-                }
-            }
-        } else if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) {
+        if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) {
             max = max.offset(facing, amount);
             int d = getDistance(max, offset, facing.getAxis());
             if (d > 64) {
@@ -81,6 +62,9 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
                 min = getLimited(min, offset, facing, 64);
             } else if (d < 1) {
                 min = getLimited(min, offset, facing, 1);
+            }
+            if (facing == EnumFacing.DOWN && min.getY() < 0) {
+                min = new BlockPos(min.getX(), 0, min.getZ());
             }
         }
     }
@@ -246,9 +230,11 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
         DOWN(facing -> EnumFacing.DOWN);
 
         private UnaryOperator<EnumFacing> operator;
+        public final String transName;
 
         Movable(UnaryOperator<EnumFacing> operator) {
             this.operator = operator;
+            this.transName = "gui." + name().toLowerCase(Locale.US);
         }
 
         public EnumFacing getActualFacing(EnumFacing facing) {

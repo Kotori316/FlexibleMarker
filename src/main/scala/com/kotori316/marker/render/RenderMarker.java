@@ -47,4 +47,9 @@ public class RenderMarker extends FastTESR<TileFlexMarker> {
         spriteRed = event.getMap().registerSprite(new ResourceLocation(Marker.modID, "blocks/red"));
         spriteBlue = event.getMap().registerSprite(new ResourceLocation(Marker.modID, "blocks/blue"));
     }
+
+    @Override
+    public boolean isGlobalRenderer(TileFlexMarker te) {
+        return true;
+    }
 }

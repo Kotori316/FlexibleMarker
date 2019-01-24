@@ -52,7 +52,7 @@ public class ButtonMessage implements IMessage {
         if (entity instanceof TileFlexMarker && world.provider.getDimension() == message.dim) {
             TileFlexMarker marker = (TileFlexMarker) entity;
             marker.move(message.movable, message.amount);
-            return new AreaMessage(message.pos, message.dim, marker.getMin(), marker.getMax());
+            return new AreaMessage(message.pos, message.dim, marker.min(), marker.max());
         }
         return null;
     }

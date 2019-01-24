@@ -9,13 +9,19 @@ import java.util.function.UnaryOperator;
 
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.ITileAreaProvider;
+import buildcraft.api.tiles.TilesAPI;
+import com.yogpc.qp.tile.IMarker;
 import javax.annotation.Nullable;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.ModAPIManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -23,7 +29,8 @@ import com.kotori316.marker.render.Box;
 
 @net.minecraftforge.fml.common.Optional.Interface(modid = "BuildCraftAPI|core", iface = "buildcraft.api.tiles.ITileAreaProvider")
 @net.minecraftforge.fml.common.Optional.Interface(modid = "BuildCraftAPI|tiles", iface = "buildcraft.api.tiles.IDebuggable")
-public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDebuggable {
+@net.minecraftforge.fml.common.Optional.Interface(modid = "quarryplus", iface = "com.yogpc.qp.tile.IMarker")
+public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDebuggable, IMarker {
 
     private BlockPos min = BlockPos.ORIGIN;
     private BlockPos max = BlockPos.ORIGIN;
@@ -32,6 +39,7 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     @Nullable
     public Box directionBox;
     public EnumFacing direction;
+    private boolean bcLoaded = ModAPIManager.INSTANCE.hasAPI("BuildCraftAPI|tiles");
 
     public void init(EnumFacing facing) {
         this.direction = facing;
@@ -129,9 +137,11 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
             .toArray(Box[]::new);
         AxisAlignedBB bb;
         if (direction.getAxis() == EnumFacing.Axis.X) {
-            bb = new AxisAlignedBB(getPos().getX() - c + a, getPos().getY() + a, getPos().getZ() + a, getPos().getX() + c + a, getPos().getY() + a, getPos().getZ() + a);
+            bb = new AxisAlignedBB(getPos().getX() - c + a, getPos().getY() + a, getPos().getZ() + a,
+                getPos().getX() + c + a, getPos().getY() + a, getPos().getZ() + a);
         } else {
-            bb = new AxisAlignedBB(getPos().getX() + a, getPos().getY() + a, getPos().getZ() - c + a, getPos().getX() + a, getPos().getY() + a, getPos().getZ() + c + a);
+            bb = new AxisAlignedBB(getPos().getX() + a, getPos().getY() + a, getPos().getZ() - c + a,
+                getPos().getX() + a, getPos().getY() + a, getPos().getZ() + c + a);
         }
         directionBox = Box.apply(bb.offset(new Vec3d(direction.getDirectionVec()).scale(a)), 1d / 8d, 1d / 8d, 1d / 8d, true, true);
     }
@@ -178,23 +188,27 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     }
 
     @Override
-    @net.minecraftforge.fml.common.Optional.Method(modid = "BuildCraftAPI|core")
-    public BlockPos min() {
-        return getMin();
+    public boolean hasLink() {
+        // There must always be area.
+        return true;
     }
 
-    public BlockPos getMin() {
+    @Override
+    public BlockPos min() {
         return min == BlockPos.ORIGIN ? getPos() : min;
     }
 
     @Override
-    @net.minecraftforge.fml.common.Optional.Method(modid = "BuildCraftAPI|core")
     public BlockPos max() {
-        return getMax();
+        return max == BlockPos.ORIGIN ? getPos() : max;
     }
 
-    public BlockPos getMax() {
-        return max == BlockPos.ORIGIN ? getPos() : max;
+    @Override
+    public List<ItemStack> removeFromWorldWithItem() {
+        NonNullList<ItemStack> list = NonNullList.create();
+        Marker.blockMarker.getDrops(list, getWorld(), getPos(), getWorld().getBlockState(getPos()), 0);
+        getWorld().setBlockToAir(getPos());
+        return list;
     }
 
     @Override
@@ -220,6 +234,27 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
             "Max: x=" + max.getX() + " y=" + max.getY() + " z=" + max.getZ(),
         };
         left.addAll(Arrays.asList(strings));
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        if (bcLoaded) {
+            if (capability == TilesAPI.CAP_TILE_AREA_PROVIDER) {
+                return true;
+            }
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+        if (bcLoaded) {
+            if (capability == TilesAPI.CAP_TILE_AREA_PROVIDER) {
+                return TilesAPI.CAP_TILE_AREA_PROVIDER.cast(this);
+            }
+        }
+        return super.getCapability(capability, facing);
     }
 
     public enum Movable {

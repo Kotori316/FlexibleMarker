@@ -14,7 +14,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.1"
+version = "1.2"
 group = "com.kotori316" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Marker"
 
@@ -64,6 +64,8 @@ dependencies {
 //    compile 'org.scala-lang:scala-library:2.11.11'
 //    compile group: "com.github.bigwheel", name: "util-backports_2.12", version: "1.1"
     deobfCompile "com.mod-buildcraft:buildcraft:7.99.17"
+    //https://minecraft.curseforge.com/api/maven/additional-enchanted-miner/AdditionalEnchantedMiner-1.12.2/0.10.8/AdditionalEnchantedMiner-1.12.2-0.10.8-deobf.jar
+    deobfCompile "additional-enchanted-miner:AdditionalEnchantedMiner-1.12.2:0.10.9:deobf"
 }
 
 processResources {

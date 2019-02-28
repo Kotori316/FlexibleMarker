@@ -21,16 +21,19 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.ModAPIManager;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.kotori316.marker.render.Box;
 
-@net.minecraftforge.fml.common.Optional.Interface(modid = "BuildCraftAPI|core", iface = "buildcraft.api.tiles.ITileAreaProvider")
-@net.minecraftforge.fml.common.Optional.Interface(modid = "BuildCraftAPI|tiles", iface = "buildcraft.api.tiles.IDebuggable")
+@net.minecraftforge.fml.common.Optional.Interface(modid = TileFlexMarker.BC_TILE_ID, iface = "buildcraft.api.tiles.ITileAreaProvider")
+@net.minecraftforge.fml.common.Optional.Interface(modid = TileFlexMarker.BC_TILE_ID, iface = "buildcraft.api.tiles.IDebuggable")
 @net.minecraftforge.fml.common.Optional.Interface(modid = "quarryplus", iface = "com.yogpc.qp.tile.IMarker")
 public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDebuggable, IMarker {
+
+    public static final String BC_CORE_ID = "buildcraftlib"; // BuildCraftAPI|core - buildcraftapi_core
+    public static final String BC_TILE_ID = "buildcraftlib"; // BuildCraftAPI|tiles - buildcraftapi_tiles
 
     private BlockPos min = BlockPos.ORIGIN;
     private BlockPos max = BlockPos.ORIGIN;
@@ -39,7 +42,7 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     @Nullable
     public Box directionBox;
     public EnumFacing direction;
-    private boolean bcLoaded = ModAPIManager.INSTANCE.hasAPI("BuildCraftAPI|tiles");
+    private boolean bcLoaded = Loader.isModLoaded(BC_TILE_ID); // ModAPIManager.INSTANCE.hasAPI("buildcraftapi_tiles");
 
     public void init(EnumFacing facing) {
         this.direction = facing;
@@ -212,7 +215,7 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     }
 
     @Override
-    @net.minecraftforge.fml.common.Optional.Method(modid = "BuildCraftAPI|core")
+    @net.minecraftforge.fml.common.Optional.Method(modid = TileFlexMarker.BC_CORE_ID)
     public void removeFromWorld() {
         if (!getWorld().isRemote) {
             getWorld().destroyBlock(getPos(), true);
@@ -220,7 +223,7 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     }
 
     @Override
-    @net.minecraftforge.fml.common.Optional.Method(modid = "BuildCraftAPI|core")
+    @net.minecraftforge.fml.common.Optional.Method(modid = TileFlexMarker.BC_CORE_ID)
     public boolean isValidFromLocation(BlockPos pos) {
         return false;
     }

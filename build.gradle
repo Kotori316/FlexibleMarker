@@ -62,7 +62,7 @@ repositories {
 dependencies {
 //    compile 'org.scala-lang:scala-library:2.11.11'
 //    compile group: "com.github.bigwheel", name: "util-backports_2.12", version: "1.1"
-    deobfCompile "com.mod-buildcraft:buildcraft-main:7.99.22"
+    deobfCompile "com.mod-buildcraft:buildcraft-main:7.99.24.1"
     //https://minecraft.curseforge.com/api/maven/additional-enchanted-miner/AdditionalEnchantedMiner-1.12.2/0.10.8/AdditionalEnchantedMiner-1.12.2-0.10.8-deobf.jar
     deobfCompile "additional-enchanted-miner:AdditionalEnchantedMiner-1.12.2:1.0.3:deobf"
 }

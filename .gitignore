@@ -6,3 +6,5 @@ build
 *.ipr
 gradle
 gradlew.bat
+gradlew
+Minecraft

@@ -7,10 +7,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.tiles.ITileAreaProvider;
-import buildcraft.api.tiles.TilesAPI;
-import com.yogpc.qp.tile.IMarker;
+import com.yogpc.qp.machines.base.IMarker;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,17 +18,15 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.ModList;
 
 import com.kotori316.marker.render.Box;
 
-@net.minecraftforge.fml.common.Optional.Interface(modid = TileFlexMarker.BC_TILE_ID, iface = "buildcraft.api.tiles.ITileAreaProvider")
-@net.minecraftforge.fml.common.Optional.Interface(modid = TileFlexMarker.BC_TILE_ID, iface = "buildcraft.api.tiles.IDebuggable")
-@net.minecraftforge.fml.common.Optional.Interface(modid = "quarryplus", iface = "com.yogpc.qp.tile.IMarker")
-public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDebuggable, IMarker {
+public class TileFlexMarker extends TileEntity implements IMarker {
 
     public static final String BC_CORE_ID = "buildcraftlib"; // BuildCraftAPI|core - buildcraftapi_core
     public static final String BC_TILE_ID = "buildcraftlib"; // BuildCraftAPI|tiles - buildcraftapi_tiles
@@ -42,7 +38,11 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     @Nullable
     public Box directionBox;
     public EnumFacing direction;
-    private boolean bcLoaded = Loader.isModLoaded(BC_TILE_ID); // ModAPIManager.INSTANCE.hasAPI("buildcraftapi_tiles");
+    private boolean bcLoaded = ModList.get().isLoaded(BC_TILE_ID); // ModAPIManager.INSTANCE.hasAPI("buildcraftapi_tiles");
+
+    public TileFlexMarker() {
+        super(Marker.TYPE);
+    }
 
     public void init(EnumFacing facing) {
         this.direction = facing;
@@ -80,7 +80,7 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public Runnable setMinMax(BlockPos min, BlockPos max) {
         return () -> {
             this.min = min;
@@ -150,16 +150,16 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setLong("min", min.toLong());
-        compound.setLong("max", max.toLong());
-        compound.setString("direction", Optional.ofNullable(direction).map(EnumFacing::toString).orElse(""));
-        return super.writeToNBT(compound);
+    public NBTTagCompound write(NBTTagCompound compound) {
+        compound.putLong("min", min.toLong());
+        compound.putLong("max", max.toLong());
+        compound.putString("direction", Optional.ofNullable(direction).map(EnumFacing::toString).orElse(""));
+        return super.write(compound);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
+    public void read(NBTTagCompound compound) {
+        super.read(compound);
         min = BlockPos.fromLong(compound.getLong("min"));
         max = BlockPos.fromLong(compound.getLong("max"));
         direction = EnumFacing.byName(compound.getString("direction"));
@@ -174,13 +174,13 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         return INFINITE_EXTENT_AABB;
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return 128 * 128 * 2;
     }
@@ -208,13 +208,14 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
 
     @Override
     public List<ItemStack> removeFromWorldWithItem() {
+        Objects.requireNonNull(getWorld());
         NonNullList<ItemStack> list = NonNullList.create();
-        Marker.blockMarker.getDrops(list, getWorld(), getPos(), getWorld().getBlockState(getPos()), 0);
-        getWorld().setBlockToAir(getPos());
+        Marker.blockMarker.getDrops(getWorld().getBlockState(getPos()), list, getWorld(), getPos(), 0);
+        getWorld().removeBlock(getPos());
         return list;
     }
 
-    @Override
+    /*@Override
     @net.minecraftforge.fml.common.Optional.Method(modid = TileFlexMarker.BC_CORE_ID)
     public void removeFromWorld() {
         if (!getWorld().isRemote) {
@@ -226,9 +227,9 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     @net.minecraftforge.fml.common.Optional.Method(modid = TileFlexMarker.BC_CORE_ID)
     public boolean isValidFromLocation(BlockPos pos) {
         return false;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         String[] strings = {
             "Pos: x=" + pos.getX() + " y=" + pos.getY() + " z=" + pos.getZ(),
@@ -237,27 +238,17 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
             "Max: x=" + max.getX() + " y=" + max.getY() + " z=" + max.getZ(),
         };
         left.addAll(Arrays.asList(strings));
-    }
+    }*/
 
+    @Nonnull
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (bcLoaded) {
-            if (capability == TilesAPI.CAP_TILE_AREA_PROVIDER) {
-                return true;
-            }
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Nullable
-    @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (bcLoaded) {
-            if (capability == TilesAPI.CAP_TILE_AREA_PROVIDER) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side) {
+        /*if (bcLoaded) {
+            if (cap == TilesAPI.CAP_TILE_AREA_PROVIDER) {
                 return TilesAPI.CAP_TILE_AREA_PROVIDER.cast(this);
             }
-        }
-        return super.getCapability(capability, facing);
+        }*/
+        return super.getCapability(cap, side);
     }
 
     public enum Movable {

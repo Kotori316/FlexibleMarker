@@ -6,14 +6,14 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.animation.FastTESR;
+import net.minecraftforge.client.model.animation.TileEntityRendererFast;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import com.kotori316.marker.Marker;
 import com.kotori316.marker.TileFlexMarker;
 
-public class RenderMarker extends FastTESR<TileFlexMarker> {
+public class RenderMarker extends TileEntityRendererFast<TileFlexMarker> {
     private static RenderMarker ourInstance = new RenderMarker();
     private TextureAtlasSprite spriteRed, spriteBlue;
 
@@ -27,8 +27,8 @@ public class RenderMarker extends FastTESR<TileFlexMarker> {
 
     @Override
     public void renderTileEntityFast(TileFlexMarker te, double x, double y, double z,
-                                     float partialTicks, int destroyStage, float partial, BufferBuilder buffer) {
-        Minecraft.getMinecraft().mcProfiler.startSection("marker");
+                                     float partialTicks, int destroyStage, BufferBuilder buffer) {
+        Minecraft.getInstance().profiler.startSection("marker");
         BlockPos pos = te.getPos();
         buffer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
         if (te.boxes != null) {
@@ -39,13 +39,19 @@ public class RenderMarker extends FastTESR<TileFlexMarker> {
         if (te.directionBox != null) {
             te.directionBox.render(buffer, spriteBlue);
         }
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getInstance().profiler.endSection();
     }
 
     @SubscribeEvent
     public void registerTexture(TextureStitchEvent.Pre event) {
-        spriteRed = event.getMap().registerSprite(new ResourceLocation(Marker.modID, "blocks/red"));
-        spriteBlue = event.getMap().registerSprite(new ResourceLocation(Marker.modID, "blocks/blue"));
+        event.getMap().registerSprite(null, new ResourceLocation(Marker.modID, "blocks/red"));
+        event.getMap().registerSprite(null, new ResourceLocation(Marker.modID, "blocks/blue"));
+    }
+
+    @SubscribeEvent
+    public void putTexture(TextureStitchEvent.Post event) {
+        spriteRed = event.getMap().getSprite(new ResourceLocation(Marker.modID, "blocks/red"));
+        spriteBlue = event.getMap().getSprite(new ResourceLocation(Marker.modID, "blocks/blue"));
     }
 
     @Override

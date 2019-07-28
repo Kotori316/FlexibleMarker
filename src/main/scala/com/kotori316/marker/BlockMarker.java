@@ -4,56 +4,62 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.Container;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IInteractionObject;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReaderBase;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkHooks;
 
-import com.kotori316.marker.gui.GuiHandler;
+import com.kotori316.marker.gui.ContainerMarker;
 
-public class BlockMarker extends Block implements ITileEntityProvider {
-    private static final AxisAlignedBB STANDING_AABB = new AxisAlignedBB(.35, 0, .35, .65, .65, .65);
+public class BlockMarker extends Block {
+    private static final VoxelShape STANDING_Shape = VoxelShapes.create(.35, 0, .35, .65, .65, .65);
+    public static final String NAME = "marker";
 
     public final ItemBlock itemBlock;
 
     public BlockMarker() {
-        super(Material.CIRCUITS);
-        setRegistryName(Marker.modID, "marker");
-        setUnlocalizedName("flexiblemarker");
-        setCreativeTab(CreativeTabs.REDSTONE);
-        this.hasTileEntity = true;
-        this.itemBlock = new ItemBlock(this);
-        itemBlock.setRegistryName(Marker.modID, "marker");
-    }
-
-    @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-                                    EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (!playerIn.isSneaking()) {
-            playerIn.openGui(Marker.getInstance(), GuiHandler.Marker_ID, worldIn, pos.getX(), pos.getY(), pos.getZ());
-            return true;
-        }
-        return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+        super(Block.Properties.create(Material.CIRCUITS));
+        setRegistryName(Marker.modID, NAME);
+        this.itemBlock = new ItemBlock(this, new Item.Properties().group(ItemGroup.REDSTONE));
+        itemBlock.setRegistryName(Marker.modID, NAME);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
+    public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (!player.isSneaking()) {
+            if (!worldIn.isRemote) {
+                NetworkHooks.openGui(((EntityPlayerMP) player), new InteractionObject(), pos);
+            }
+            return true;
+        }
+        return super.onBlockActivated(state, worldIn, pos, player, hand, side, hitX, hitY, hitZ);
     }
 
     @Override
@@ -63,52 +69,46 @@ public class BlockMarker extends Block implements ITileEntityProvider {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer() {
+    @OnlyIn(Dist.CLIENT)
+    public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     @SuppressWarnings("deprecation")
-    @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+    public boolean isSideInvisible(IBlockState state, IBlockState adjacentBlockState, EnumFacing side) {
         return true;
     }
 
-    @Nullable
     @Override
     @SuppressWarnings("deprecation")
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        return NULL_AABB;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return STANDING_AABB;
-    }
-
-    @Override
-    public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
-        return side == EnumFacing.UP && worldIn.isSideSolid(pos.down(), EnumFacing.UP);
+    public VoxelShape getCollisionShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
+        return VoxelShapes.empty();
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        dropItem(worldIn, pos);
+    public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
+        return STANDING_Shape;
     }
 
-    private void dropItem(World worldIn, BlockPos pos) {
-        if (!worldIn.isSideSolid(pos.down(), EnumFacing.UP)) {
-            worldIn.destroyBlock(pos, true);
-        }
+    /**
+     * Just copied from {@link net.minecraft.block.BlockTorchWall}.
+     */
+    @Override
+    @SuppressWarnings("deprecation")
+    public boolean isValidPosition(IBlockState state, IWorldReaderBase worldIn, BlockPos pos) {
+        EnumFacing enumfacing = EnumFacing.UP;
+        BlockPos blockpos = pos.offset(enumfacing.getOpposite());
+        IBlockState iblockstate = worldIn.getBlockState(blockpos);
+        return iblockstate.getBlockFaceShape(worldIn, blockpos, enumfacing) == BlockFaceShape.SOLID;
     }
 
     @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
-        super.onBlockAdded(worldIn, pos, state);
-        dropItem(worldIn, pos);
+    @SuppressWarnings("deprecation")
+    public IBlockState updatePostPlacement(IBlockState stateIn, EnumFacing facing, IBlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+        return !stateIn.isValidPosition(worldIn, currentPos) ? Blocks.AIR.getDefaultState() : stateIn;
     }
 
     @Override
@@ -118,7 +118,44 @@ public class BlockMarker extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileFlexMarker();
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
+    }
+
+    @Override
+    public TileEntity createTileEntity(IBlockState state, IBlockReader world) {
+        return Marker.TYPE.create();
+    }
+
+    public static final String GUI_ID = Marker.modID + ":gui_" + NAME;
+
+    private static class InteractionObject implements IInteractionObject {
+
+        @Override
+        public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
+            return new ContainerMarker(playerIn);
+        }
+
+        @Override
+        public String getGuiID() {
+            return GUI_ID;
+        }
+
+        @SuppressWarnings("NoTranslation")
+        @Override
+        public ITextComponent getName() {
+            return new TextComponentTranslation("block.flexiblemarker.marker");
+        }
+
+        @Override
+        public boolean hasCustomName() {
+            return false;
+        }
+
+        @Nullable
+        @Override
+        public ITextComponent getCustomName() {
+            return null;
+        }
     }
 }

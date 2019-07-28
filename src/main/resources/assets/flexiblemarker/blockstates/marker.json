@@ -1,13 +1,13 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "flexiblemarker:markerplus_post",
+    "model": "flexiblemarker:marker",
     "textures": {
       "texture": "flexiblemarker:blocks/marker"
     }
   },
   "variants": {
-    "normal": [
+    "": [
       {}
     ]
   },

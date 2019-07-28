@@ -1,7 +1,5 @@
 package com.kotori316.marker.gui;
 
-import java.io.IOException;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,7 +12,7 @@ import com.kotori316.marker.TileFlexMarker;
 import com.kotori316.marker.packet.ButtonMessage;
 import com.kotori316.marker.packet.PacketHandler;
 
-public class GuiMarker extends GuiContainer {
+public class GuiMarker extends GuiContainer implements IHandleButton {
     private static final ResourceLocation LOCATION = new ResourceLocation(Marker.modID, "textures/gui/marker.png");
     private static final String[] upSide = {"UP"};
     private static final String[] center = {"Left", "Forward", "Right"};
@@ -41,32 +39,32 @@ public class GuiMarker extends GuiContainer {
 
         for (int i = 0; i < upSide.length; i++) {
             for (int j = 0; j < mp.length; j++) {
-                buttonList.add(new GuiButton(index++, guiLeft + xSize / 2 - 4 * w * upSide.length / 2 + i * w * mp.length + w * j, guiTop + top, w, h, mp[j]));
+                addButton(new IHandleButton.Button(index++, guiLeft + xSize / 2 - 4 * w * upSide.length / 2 + i * w * mp.length + w * j, guiTop + top, w, h, mp[j], this));
             }
         }
         for (int i = 0; i < center.length; i++) {
             for (int j = 0; j < mp.length; j++) {
-                buttonList.add(new GuiButton(index++, guiLeft + xSize / 2 - 4 * w * center.length / 2 + i * w * mp.length + w * j, guiTop + top + 35, w, h, mp[j]));
+                addButton(new IHandleButton.Button(index++, guiLeft + xSize / 2 - 4 * w * center.length / 2 + i * w * mp.length + w * j, guiTop + top + 35, w, h, mp[j], this));
             }
         }
         for (int i = 0; i < downSide.length; i++) {
             for (int j = 0; j < mp.length; j++) {
-                buttonList.add(new GuiButton(index++, guiLeft + xSize / 2 - 4 * w * downSide.length / 2 + i * w * mp.length + w * j, guiTop + top + 70, w, h, mp[j]));
+                addButton(new IHandleButton.Button(index++, guiLeft + xSize / 2 - 4 * w * downSide.length / 2 + i * w * mp.length + w * j, guiTop + top + 70, w, h, mp[j], this));
             }
         }
 
     }
 
     @Override
-    public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
+    public void render(final int mouseX, final int mouseY, final float partialTicks) {
         this.drawDefaultBackground();
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(LOCATION);
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
     }
@@ -86,10 +84,9 @@ public class GuiMarker extends GuiContainer {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        super.actionPerformed(button);
+    public void actionPerformed(GuiButton button) {
         TileFlexMarker.Movable movable = TileFlexMarker.Movable.valueOf(button.id / 4);
-        ButtonMessage message = new ButtonMessage(marker.getPos(), marker.getWorld().provider.getDimension(), movable, amounts[button.id % 4]);
+        ButtonMessage message = new ButtonMessage(marker.getPos(), PacketHandler.getDimId(marker.getWorld()), movable, amounts[button.id % 4]);
         PacketHandler.sendToServer(message);
     }
 }

@@ -6,11 +6,10 @@
   ],
   "key": {
     "E": {
-      "type": "forge:ore_dict",
-      "ore": "gemEmerald"
+      "tag": "forge:gems/emerald"
     },
     "T": {
-      "item": "minecraft:redstone_torch"
+      "item": "buildcraftcore:marker_volume"
     }
   },
   "result": {
@@ -19,11 +18,8 @@
   },
   "conditions": [
     {
-      "type": "forge:not",
-      "value": {
-        "type": "forge:mod_loaded",
-        "modid": "buildcraftcore"
-      }
+      "type": "forge:mod_loaded",
+      "modid": "buildcraftcore"
     }
   ]
 }

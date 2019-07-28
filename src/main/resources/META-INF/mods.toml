@@ -1,0 +1,21 @@
+modLoader="javafml"
+loaderVersion="[25,)" 
+[[mods]] 
+modId="flexiblemarker"
+version="${file.jarVersion}"
+displayName="FlexibleMarker"
+credits="Kotori316"
+authors="Kotori316"
+description=''' '''
+[[dependencies.flexiblemarker]]
+    modId="forge" 
+    mandatory=true 
+    versionRange="[25,)" 
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.flexiblemarker]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.13.2]"
+    ordering="NONE"
+    side="BOTH"

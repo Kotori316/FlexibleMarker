@@ -1,24 +1,47 @@
 package com.kotori316.marker.packet;
 
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
+import java.util.Optional;
+
+import javax.annotation.Nullable;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import com.kotori316.marker.Marker;
 
 public class PacketHandler {
-    private static SimpleNetworkWrapper wrapper;
+    private static final String PROTOCOL_VERSION = "1";
+    public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
+        new ResourceLocation(Marker.modID, "main"),
+        () -> PROTOCOL_VERSION,
+        PROTOCOL_VERSION::equals,
+        PROTOCOL_VERSION::equals
+    );
+
+    public static int getDimId(@Nullable World world) {
+        return Optional.ofNullable(world)
+            .map(World::getDimension)
+            .map(Dimension::getType)
+            .map(DimensionType::getId)
+            .orElse(0);
+    }
 
     public static void init() {
-        wrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Marker.ModName);
         int i = 0;
-        wrapper.registerMessage(ButtonMessage::onReceive, ButtonMessage.class, i++, Side.SERVER);
-        wrapper.registerMessage(AreaMessage::onReceive, AreaMessage.class, i++, Side.CLIENT);
+        INSTANCE.registerMessage(i++, ButtonMessage.class, ButtonMessage::toBytes, ButtonMessage::fromBytes, ButtonMessage::onReceive);
+        INSTANCE.registerMessage(i++, AreaMessage.class, AreaMessage::toBytes, AreaMessage::fromBytes, AreaMessage::onReceive);
         assert i >= 0;
     }
 
-    public static void sendToServer(IMessage message) {
-        wrapper.sendToServer(message);
+    public static void sendToClient(Object message, World world) {
+        INSTANCE.send(PacketDistributor.DIMENSION.with(() -> world.getDimension().getType()), message);
+    }
+
+    public static void sendToServer(Object message) {
+        INSTANCE.sendToServer(message);
     }
 }

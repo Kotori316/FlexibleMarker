@@ -1,19 +1,19 @@
 package com.kotori316.marker.packet;
 
-import io.netty.buffer.ByteBuf;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import com.kotori316.marker.TileFlexMarker;
 
 /**
  * To server only.
  */
-public class ButtonMessage implements IMessage {
+public class ButtonMessage {
     private BlockPos pos;
     private int dim;
     private TileFlexMarker.Movable movable;
@@ -30,30 +30,29 @@ public class ButtonMessage implements IMessage {
         this.amount = amount;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        PacketBuffer p = new PacketBuffer(buf);
-        pos = p.readBlockPos();
-        dim = p.readInt();
-        movable = p.readEnumValue(TileFlexMarker.Movable.class);
-        amount = p.readInt();
+    public static ButtonMessage fromBytes(PacketBuffer p) {
+        ButtonMessage message = new ButtonMessage();
+        message.pos = p.readBlockPos();
+        message.dim = p.readInt();
+        message.movable = p.readEnumValue(TileFlexMarker.Movable.class);
+        message.amount = p.readInt();
+        return message;
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        PacketBuffer p = new PacketBuffer(buf);
+    public void toBytes(PacketBuffer p) {
         p.writeBlockPos(pos).writeInt(dim);
         p.writeEnumValue(movable).writeInt(amount);
     }
 
-    public static IMessage onReceive(ButtonMessage message, MessageContext ctx) {
-        World world = ctx.getServerHandler().player.world;
-        TileEntity entity = world.getTileEntity(message.pos);
-        if (entity instanceof TileFlexMarker && world.provider.getDimension() == message.dim) {
-            TileFlexMarker marker = (TileFlexMarker) entity;
-            marker.move(message.movable, message.amount);
-            return new AreaMessage(message.pos, message.dim, marker.min(), marker.max());
-        }
-        return null;
+    public void onReceive(Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> Optional.ofNullable(ctx.get().getSender())
+            .map(Entity::getEntityWorld)
+            .map(world -> world.getTileEntity(this.pos))
+            .filter(t -> t instanceof TileFlexMarker && PacketHandler.getDimId(t.getWorld()) == dim)
+            .ifPresent(entity -> {
+                TileFlexMarker marker = (TileFlexMarker) entity;
+                marker.move(this.movable, this.amount);
+                PacketHandler.sendToClient(new AreaMessage(this.pos, this.dim, marker.min(), marker.max()), marker.getWorld());
+            }));
     }
 }

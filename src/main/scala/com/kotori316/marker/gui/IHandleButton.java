@@ -1,20 +1,22 @@
 package com.kotori316.marker.gui;
 
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.widget.button.AbstractButton;
 
 public interface IHandleButton {
-    void actionPerformed(final GuiButton button);
+    void actionPerformed(final Button button);
 
-    class Button extends GuiButton {
+    class Button extends AbstractButton {
+        public final int id;
         private final IHandleButton handler;
 
         public Button(int buttonId, int x, int y, int widthIn, int heightIn, String buttonText, IHandleButton handler) {
-            super(buttonId, x, y, widthIn, heightIn, buttonText);
+            super(x, y, widthIn, heightIn, buttonText);
+            this.id = buttonId;
             this.handler = handler;
         }
 
         @Override
-        public final void onClick(double mouseX, double mouseY) {
+        public void onPress() {
             handler.actionPerformed(this);
         }
     }

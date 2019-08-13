@@ -7,7 +7,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.animation.TileEntityRendererFast;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import com.kotori316.marker.Marker;
@@ -22,13 +21,14 @@ public class RenderMarker extends TileEntityRendererFast<TileFlexMarker> {
     }
 
     private RenderMarker() {
-        MinecraftForge.EVENT_BUS.register(this);
+//        MinecraftForge.EVENT_BUS.register(this);
+        // Register to mod event bus in Main class
     }
 
     @Override
     public void renderTileEntityFast(TileFlexMarker te, double x, double y, double z,
                                      float partialTicks, int destroyStage, BufferBuilder buffer) {
-        Minecraft.getInstance().profiler.startSection("marker");
+        Minecraft.getInstance().getProfiler().startSection("marker");
         BlockPos pos = te.getPos();
         buffer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
         if (te.boxes != null) {
@@ -39,19 +39,23 @@ public class RenderMarker extends TileEntityRendererFast<TileFlexMarker> {
         if (te.directionBox != null) {
             te.directionBox.render(buffer, spriteBlue);
         }
-        Minecraft.getInstance().profiler.endSection();
+        Minecraft.getInstance().getProfiler().endSection();
     }
 
     @SubscribeEvent
     public void registerTexture(TextureStitchEvent.Pre event) {
-        event.getMap().registerSprite(null, new ResourceLocation(Marker.modID, "blocks/red"));
-        event.getMap().registerSprite(null, new ResourceLocation(Marker.modID, "blocks/blue"));
+        if ("textures".equals(event.getMap().getBasePath())) {
+            event.addSprite(new ResourceLocation(Marker.modID, "blocks/red"));
+            event.addSprite(new ResourceLocation(Marker.modID, "blocks/blue"));
+        }
     }
 
     @SubscribeEvent
     public void putTexture(TextureStitchEvent.Post event) {
-        spriteRed = event.getMap().getSprite(new ResourceLocation(Marker.modID, "blocks/red"));
-        spriteBlue = event.getMap().getSprite(new ResourceLocation(Marker.modID, "blocks/blue"));
+        if ("textures".equals(event.getMap().getBasePath())) {
+            spriteRed = event.getMap().getSprite(new ResourceLocation(Marker.modID, "blocks/red"));
+            spriteBlue = event.getMap().getSprite(new ResourceLocation(Marker.modID, "blocks/blue"));
+        }
     }
 
     @Override

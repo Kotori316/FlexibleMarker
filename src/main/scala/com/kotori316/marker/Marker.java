@@ -37,7 +37,8 @@ public class Marker {
     @SubscribeEvent
     public void clientInit(FMLClientSetupEvent event) {
         ClientRegistry.bindTileEntitySpecialRenderer(TileFlexMarker.class, RenderMarker.getInstance());
-        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.GUIFACTORY, () -> GuiHandler::getGui);
+        FMLJavaModLoadingContext.get().getModEventBus().register(RenderMarker.getInstance());
+        ScreenManager.registerFactory(CONTAINER_TYPE, GuiMarker::new);
     }
 
     @SubscribeEvent

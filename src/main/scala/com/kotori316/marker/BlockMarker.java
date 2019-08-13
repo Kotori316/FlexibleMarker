@@ -2,34 +2,36 @@ package com.kotori316.marker;
 
 import java.util.Optional;
 
-import javax.annotation.Nullable;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.WallTorchBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.inventory.Container;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReaderBase;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -41,31 +43,26 @@ public class BlockMarker extends Block {
     private static final VoxelShape STANDING_Shape = VoxelShapes.create(.35, 0, .35, .65, .65, .65);
     public static final String NAME = "marker";
 
-    public final ItemBlock itemBlock;
+    public final BlockItem itemBlock;
 
     public BlockMarker() {
-        super(Block.Properties.create(Material.CIRCUITS));
+        super(Block.Properties.create(Material.MISCELLANEOUS));
         setRegistryName(Marker.modID, NAME);
-        this.itemBlock = new ItemBlock(this, new Item.Properties().group(ItemGroup.REDSTONE));
+        this.itemBlock = new BlockItem(this, new Item.Properties().group(ItemGroup.REDSTONE));
         itemBlock.setRegistryName(Marker.modID, NAME);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos,
+                                    PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (!player.isSneaking()) {
             if (!worldIn.isRemote) {
-                NetworkHooks.openGui(((EntityPlayerMP) player), new InteractionObject(), pos);
+                NetworkHooks.openGui(((ServerPlayerEntity) player), new InteractionObject(pos), pos);
             }
             return true;
         }
-        return super.onBlockActivated(state, worldIn, pos, player, hand, side, hitX, hitY, hitZ);
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public boolean isFullCube(IBlockState state) {
-        return false;
+        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
 
     @Override
@@ -75,87 +72,81 @@ public class BlockMarker extends Block {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
+    }
+
+    @Override
     @OnlyIn(Dist.CLIENT)
     @SuppressWarnings("deprecation")
-    public boolean isSideInvisible(IBlockState state, IBlockState adjacentBlockState, EnumFacing side) {
+    public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side) {
         return true;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getCollisionShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
+    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         return VoxelShapes.empty();
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         return STANDING_Shape;
     }
 
     /**
-     * Just copied from {@link net.minecraft.block.BlockTorchWall}.
+     * Just copied from {@link WallTorchBlock}.
      */
     @Override
     @SuppressWarnings("deprecation")
-    public boolean isValidPosition(IBlockState state, IWorldReaderBase worldIn, BlockPos pos) {
-        EnumFacing enumfacing = EnumFacing.UP;
+    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
+        Direction enumfacing = Direction.UP;
         BlockPos blockpos = pos.offset(enumfacing.getOpposite());
-        IBlockState iblockstate = worldIn.getBlockState(blockpos);
-        return iblockstate.getBlockFaceShape(worldIn, blockpos, enumfacing) == BlockFaceShape.SOLID;
+        BlockState iblockstate = worldIn.getBlockState(blockpos);
+        return iblockstate.func_224755_d(worldIn, blockpos, enumfacing);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public IBlockState updatePostPlacement(IBlockState stateIn, EnumFacing facing, IBlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
         return !stateIn.isValidPosition(worldIn, currentPos) ? Blocks.AIR.getDefaultState() : stateIn;
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        Optional.ofNullable((TileFlexMarker) worldIn.getTileEntity(pos)).ifPresent(t -> t.init(EnumFacing.fromAngle(placer.getRotationYawHead())));
+        Optional.ofNullable((TileFlexMarker) worldIn.getTileEntity(pos)).ifPresent(t -> t.init(Direction.fromAngle(placer.getRotationYawHead())));
     }
 
     @Override
-    public boolean hasTileEntity(IBlockState state) {
+    public boolean hasTileEntity(BlockState state) {
         return true;
     }
 
     @Override
-    public TileEntity createTileEntity(IBlockState state, IBlockReader world) {
-        return Marker.TYPE.create();
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return Marker.TILE_TYPE.create();
     }
 
     public static final String GUI_ID = Marker.modID + ":gui_" + NAME;
 
-    private static class InteractionObject implements IInteractionObject {
+    private static class InteractionObject implements INamedContainerProvider {
+        private final BlockPos pos;
 
-        @Override
-        public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
-            return new ContainerMarker(playerIn);
+        public InteractionObject(BlockPos pos) {
+            this.pos = pos;
         }
 
         @Override
-        public String getGuiID() {
-            return GUI_ID;
-        }
-
-        @SuppressWarnings("NoTranslation")
-        @Override
-        public ITextComponent getName() {
-            return new TextComponentTranslation("block.flexiblemarker.marker");
+        public ITextComponent getDisplayName() {
+            return new TranslationTextComponent("block.flexiblemarker.marker");
         }
 
         @Override
-        public boolean hasCustomName() {
-            return false;
-        }
-
-        @Nullable
-        @Override
-        public ITextComponent getCustomName() {
-            return null;
+        public Container createMenu(int id, PlayerInventory p_createMenu_2_, PlayerEntity playerIn) {
+            return new ContainerMarker(id, playerIn, this.pos);
         }
     }
 }

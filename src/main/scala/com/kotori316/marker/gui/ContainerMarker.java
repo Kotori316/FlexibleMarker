@@ -1,13 +1,22 @@
 package com.kotori316.marker.gui;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+
+import com.kotori316.marker.Marker;
 
 public class ContainerMarker extends Container {
 
-    public ContainerMarker(EntityPlayer player) {
+    public final PlayerEntity player;
+    public final BlockPos pos;
+
+    public ContainerMarker(int id, PlayerEntity player, BlockPos pos) {
+        super(Marker.CONTAINER_TYPE, id);
+        this.player = player;
+        this.pos = pos;
         int oneBox = 18;
         for (int h = 0; h < 3; h++) {
             for (int v = 0; v < 9; v++) {
@@ -20,12 +29,12 @@ public class ContainerMarker extends Container {
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer playerIn) {
+    public boolean canInteractWith(PlayerEntity playerIn) {
         return true;
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
         return ItemStack.EMPTY;
     }
 }

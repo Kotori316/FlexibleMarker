@@ -1,12 +1,16 @@
 modLoader="javafml"
-loaderVersion="[25,)" 
+loaderVersion="[25,)"
+issueTrackerURL="https://github.com/Kotori316/FlexibleMarker/issues"
 [[mods]] 
 modId="flexiblemarker"
 version="${file.jarVersion}"
 displayName="FlexibleMarker"
 credits="Kotori316"
 authors="Kotori316"
-description=''' '''
+displayURL="https://github.com/Kotori316/FlexibleMarker"
+description='''
+This mod adds a marker, which can change the area by GUI.
+'''
 [[dependencies.flexiblemarker]]
     modId="forge" 
     mandatory=true 

@@ -7,17 +7,18 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-import com.yogpc.qp.machines.base.IMarker;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -26,25 +27,25 @@ import net.minecraftforge.fml.ModList;
 
 import com.kotori316.marker.render.Box;
 
-public class TileFlexMarker extends TileEntity implements IMarker {
+public class TileFlexMarker extends TileEntity /*implements IMarker*/ {
 
     public static final String BC_CORE_ID = "buildcraftlib"; // BuildCraftAPI|core - buildcraftapi_core
     public static final String BC_TILE_ID = "buildcraftlib"; // BuildCraftAPI|tiles - buildcraftapi_tiles
 
-    private BlockPos min = BlockPos.ORIGIN;
-    private BlockPos max = BlockPos.ORIGIN;
+    private BlockPos min = BlockPos.ZERO;
+    private BlockPos max = BlockPos.ZERO;
     @Nullable
     public Box[] boxes;
     @Nullable
     public Box directionBox;
-    public EnumFacing direction;
+    public Direction direction;
     private boolean bcLoaded = ModList.get().isLoaded(BC_TILE_ID); // ModAPIManager.INSTANCE.hasAPI("buildcraftapi_tiles");
 
     public TileFlexMarker() {
-        super(Marker.TYPE);
+        super(Marker.TILE_TYPE);
     }
 
-    public void init(EnumFacing facing) {
+    public void init(Direction facing) {
         this.direction = facing;
         this.min = getPos();
         this.max = getPos();
@@ -56,9 +57,9 @@ public class TileFlexMarker extends TileEntity implements IMarker {
 
     @SuppressWarnings("Duplicates")
     public void move(Movable movable, int amount) {
-        EnumFacing facing = movable.getActualFacing(direction);
+        Direction facing = movable.getActualFacing(direction);
         BlockPos offset = getPos();
-        if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) {
+        if (facing.getAxisDirection() == Direction.AxisDirection.POSITIVE) {
             max = max.offset(facing, amount);
             int d = getDistance(max, offset, facing.getAxis());
             if (d > 64) {
@@ -74,7 +75,7 @@ public class TileFlexMarker extends TileEntity implements IMarker {
             } else if (d < 1) {
                 min = getLimited(min, offset, facing, 1);
             }
-            if (facing == EnumFacing.DOWN && min.getY() < 0) {
+            if (facing == Direction.DOWN && min.getY() < 0) {
                 min = new BlockPos(min.getX(), 0, min.getZ());
             }
         }
@@ -90,6 +91,7 @@ public class TileFlexMarker extends TileEntity implements IMarker {
     }
 
     private void setRender() {
+        assert world != null; // called in real world.
         if (!world.isRemote)
             return;
 
@@ -139,7 +141,7 @@ public class TileFlexMarker extends TileEntity implements IMarker {
             .map(range -> Box.apply(range, 1d / 8d, 1d / 8d, 1d / 8d, false, false))
             .toArray(Box[]::new);
         AxisAlignedBB bb;
-        if (direction.getAxis() == EnumFacing.Axis.X) {
+        if (direction.getAxis() == Direction.Axis.X) {
             bb = new AxisAlignedBB(getPos().getX() - c + a, getPos().getY() + a, getPos().getZ() + a,
                 getPos().getX() + c + a, getPos().getY() + a, getPos().getZ() + a);
         } else {
@@ -150,26 +152,26 @@ public class TileFlexMarker extends TileEntity implements IMarker {
     }
 
     @Override
-    public NBTTagCompound write(NBTTagCompound compound) {
+    public CompoundNBT write(CompoundNBT compound) {
         compound.putLong("min", min.toLong());
         compound.putLong("max", max.toLong());
-        compound.putString("direction", Optional.ofNullable(direction).map(EnumFacing::toString).orElse(""));
+        compound.putString("direction", Optional.ofNullable(direction).map(Direction::toString).orElse(""));
         return super.write(compound);
     }
 
     @Override
-    public void read(NBTTagCompound compound) {
+    public void read(CompoundNBT compound) {
         super.read(compound);
         min = BlockPos.fromLong(compound.getLong("min"));
         max = BlockPos.fromLong(compound.getLong("max"));
-        direction = EnumFacing.byName(compound.getString("direction"));
+        direction = Direction.byName(compound.getString("direction"));
         if (hasWorld()) {
             setRender();
         }
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
+    public CompoundNBT getUpdateTag() {
         return super.serializeNBT();
     }
 
@@ -190,28 +192,28 @@ public class TileFlexMarker extends TileEntity implements IMarker {
         return true;
     }
 
-    @Override
+    //    @Override
     public boolean hasLink() {
         // There must always be area.
         return true;
     }
 
-    @Override
+    //    @Override
     public BlockPos min() {
-        return min == BlockPos.ORIGIN ? getPos() : min;
+        return min == BlockPos.ZERO ? getPos() : min;
     }
 
-    @Override
+    //    @Override
     public BlockPos max() {
-        return max == BlockPos.ORIGIN ? getPos() : max;
+        return max == BlockPos.ZERO ? getPos() : max;
     }
 
-    @Override
+    //    @Override
     public List<ItemStack> removeFromWorldWithItem() {
         Objects.requireNonNull(getWorld());
         NonNullList<ItemStack> list = NonNullList.create();
-        Marker.blockMarker.getDrops(getWorld().getBlockState(getPos()), list, getWorld(), getPos(), 0);
-        getWorld().removeBlock(getPos());
+        Block.getDrops(getWorld().getBlockState(getPos()), ((ServerWorld) getWorld()), getPos(), this);
+        getWorld().removeBlock(getPos(), false);
         return list;
     }
 
@@ -242,7 +244,7 @@ public class TileFlexMarker extends TileEntity implements IMarker {
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         /*if (bcLoaded) {
             if (cap == TilesAPI.CAP_TILE_AREA_PROVIDER) {
                 return TilesAPI.CAP_TILE_AREA_PROVIDER.cast(this);
@@ -252,21 +254,21 @@ public class TileFlexMarker extends TileEntity implements IMarker {
     }
 
     public enum Movable {
-        UP(facing -> EnumFacing.UP),
-        LEFT(EnumFacing::rotateYCCW),
+        UP(facing -> Direction.UP),
+        LEFT(Direction::rotateYCCW),
         FORWARD(UnaryOperator.identity()),
-        RIGHT(EnumFacing::rotateY),
-        DOWN(facing -> EnumFacing.DOWN);
+        RIGHT(Direction::rotateY),
+        DOWN(facing -> Direction.DOWN);
 
-        private UnaryOperator<EnumFacing> operator;
+        private UnaryOperator<Direction> operator;
         public final String transName;
 
-        Movable(UnaryOperator<EnumFacing> operator) {
+        Movable(UnaryOperator<Direction> operator) {
             this.operator = operator;
             this.transName = "gui." + name().toLowerCase(Locale.US);
         }
 
-        public EnumFacing getActualFacing(EnumFacing facing) {
+        public Direction getActualFacing(Direction facing) {
             return this.operator.apply(facing);
         }
 
@@ -281,7 +283,7 @@ public class TileFlexMarker extends TileEntity implements IMarker {
         }
     }
 
-    public static int getDistance(BlockPos to, BlockPos from, EnumFacing.Axis axis) {
+    public static int getDistance(BlockPos to, BlockPos from, Direction.Axis axis) {
         switch (axis) {
             case X:
                 return to.getX() - from.getX();
@@ -293,7 +295,7 @@ public class TileFlexMarker extends TileEntity implements IMarker {
         throw new IllegalStateException(String.format("Other axis? Axis=%s, from=%s, to=%s", axis, from, to));
     }
 
-    public static BlockPos getLimited(BlockPos to, BlockPos from, EnumFacing facing, int limit) {
+    public static BlockPos getLimited(BlockPos to, BlockPos from, Direction facing, int limit) {
         switch (facing.getAxis()) {
             case X:
                 return new BlockPos(from.getX(), to.getY(), to.getZ()).offset(facing, limit);

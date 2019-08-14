@@ -102,10 +102,10 @@ public class BlockMarker extends Block {
     @Override
     @SuppressWarnings("deprecation")
     public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
-        Direction enumfacing = Direction.UP;
-        BlockPos blockpos = pos.offset(enumfacing.getOpposite());
-        BlockState iblockstate = worldIn.getBlockState(blockpos);
-        return iblockstate.func_224755_d(worldIn, blockpos, enumfacing);
+        Direction direction = Direction.UP;
+        BlockPos blockpos = pos.offset(direction.getOpposite());
+        BlockState floorState = worldIn.getBlockState(blockpos);
+        return floorState.func_224755_d(worldIn, blockpos, direction);
     }
 
     @Override

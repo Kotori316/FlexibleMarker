@@ -1,6 +1,8 @@
-# FlexibleMarker for Minecraft 1.13.2
+# FlexibleMarker for Minecraft 1.14.4
 Add a BuildCraft marker with GUI.
+
+<strong>Requires [library file](https://www.curseforge.com/minecraft/mc-mods/scalable-cats-force/files/2707486) to work.</strong>
 
 ### APIs
 * Scala 2.12.8 (https://www.scala-lang.org/)
-* QuarryPlus (https://github.com/Kotori316/QuarryPlus)
+* ~QuarryPlus (https://github.com/Kotori316/QuarryPlus)~

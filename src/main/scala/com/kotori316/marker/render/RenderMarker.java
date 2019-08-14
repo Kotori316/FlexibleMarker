@@ -14,7 +14,7 @@ import com.kotori316.marker.TileFlexMarker;
 
 public class RenderMarker extends TileEntityRendererFast<TileFlexMarker> {
     private static RenderMarker ourInstance = new RenderMarker();
-    private TextureAtlasSprite spriteRed, spriteBlue;
+    private TextureAtlasSprite spriteWhite;
 
     public static RenderMarker getInstance() {
         return ourInstance;
@@ -33,11 +33,11 @@ public class RenderMarker extends TileEntityRendererFast<TileFlexMarker> {
         buffer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
         if (te.boxes != null) {
             for (Box box : te.boxes) {
-                box.render(buffer, spriteRed);
+                box.render(buffer, spriteWhite, ColorBox.redColor());
             }
         }
         if (te.directionBox != null) {
-            te.directionBox.render(buffer, spriteBlue);
+            te.directionBox.render(buffer, spriteWhite, ColorBox.blueColor());
         }
         Minecraft.getInstance().getProfiler().endSection();
     }
@@ -45,16 +45,14 @@ public class RenderMarker extends TileEntityRendererFast<TileFlexMarker> {
     @SubscribeEvent
     public void registerTexture(TextureStitchEvent.Pre event) {
         if ("textures".equals(event.getMap().getBasePath())) {
-            event.addSprite(new ResourceLocation(Marker.modID, "blocks/red"));
-            event.addSprite(new ResourceLocation(Marker.modID, "blocks/blue"));
+            event.addSprite(new ResourceLocation(Marker.modID, "blocks/white"));
         }
     }
 
     @SubscribeEvent
     public void putTexture(TextureStitchEvent.Post event) {
         if ("textures".equals(event.getMap().getBasePath())) {
-            spriteRed = event.getMap().getSprite(new ResourceLocation(Marker.modID, "blocks/red"));
-            spriteBlue = event.getMap().getSprite(new ResourceLocation(Marker.modID, "blocks/blue"));
+            spriteWhite = event.getMap().getSprite(new ResourceLocation(Marker.modID, "blocks/white"));
         }
     }
 

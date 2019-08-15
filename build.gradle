@@ -81,7 +81,7 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.13.2-25.0.219'
-    implementation "org.scala-lang:scala-library:2.12.8"
+    implementation "org.scala-lang:scala-library:2.12.9"
     implementation fg.deobf("additional-enchanted-miner:AdditionalEnchantedMiner-1.13.2:13.3.1:deobf")
 
     // Test Dependencies.
@@ -148,4 +148,4 @@ task signJar2() {
 }
 
 // Runs this task automatically when build is ran.
-        assemble.dependsOn(signJar2)
+assemble.dependsOn(signJar2)

@@ -25,30 +25,31 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.kotori316.marker.gui.GuiHandler;
 
-public class BlockMarker extends Block implements ITileEntityProvider {
+public abstract class BlockMarker extends Block implements ITileEntityProvider {
     private static final AxisAlignedBB STANDING_AABB = new AxisAlignedBB(.35, 0, .35, .65, .65, .65);
 
     public final ItemBlock itemBlock;
 
-    public BlockMarker() {
+    public BlockMarker(String registryName, String unlocalizedName) {
         super(Material.CIRCUITS);
-        setRegistryName(Marker.modID, "marker");
-        setUnlocalizedName("flexiblemarker");
+        setRegistryName(Marker.modID, registryName);
+        setUnlocalizedName(unlocalizedName);
         setCreativeTab(CreativeTabs.REDSTONE);
         this.hasTileEntity = true;
         this.itemBlock = new ItemBlock(this);
-        itemBlock.setRegistryName(Marker.modID, "marker");
+        itemBlock.setRegistryName(Marker.modID, registryName);
     }
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
                                     EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!playerIn.isSneaking()) {
-            playerIn.openGui(Marker.getInstance(), GuiHandler.Marker_ID, worldIn, pos.getX(), pos.getY(), pos.getZ());
-            return true;
+            return openGUI(worldIn, pos, playerIn);
         }
         return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
     }
+
+    protected abstract boolean openGUI(World worldIn, BlockPos pos, EntityPlayer playerIn);
 
     @Override
     @SuppressWarnings("deprecation")
@@ -112,13 +113,31 @@ public class BlockMarker extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        Optional.ofNullable((TileFlexMarker) worldIn.getTileEntity(pos)).ifPresent(t -> t.init(EnumFacing.fromAngle(placer.getRotationYawHead())));
-    }
+    public abstract void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack);
 
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileFlexMarker();
+    public abstract TileEntity createNewTileEntity(World worldIn, int meta);
+
+    public static class BlockFlexMarker extends BlockMarker {
+
+        public BlockFlexMarker() {
+            super("marker", "flexiblemarker");
+        }
+
+        @Override
+        public TileEntity createNewTileEntity(World worldIn, int meta) {
+            return new TileFlexMarker();
+        }
+
+        @Override
+        protected boolean openGUI(World worldIn, BlockPos pos, EntityPlayer playerIn) {
+            playerIn.openGui(Marker.getInstance(), GuiHandler.Marker_ID, worldIn, pos.getX(), pos.getY(), pos.getZ());
+            return true;
+        }
+
+        @Override
+        public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+            Optional.ofNullable((TileFlexMarker) worldIn.getTileEntity(pos)).ifPresent(t -> t.init(EnumFacing.fromAngle(placer.getRotationYawHead())));
+        }
     }
 }

@@ -26,7 +26,7 @@ import com.kotori316.marker.render.RenderMarker;
 public class Marker {
     public static final String modID = "flexiblemarker";
     public static final String ModName = "FlexibleMarker";
-    public static final BlockMarker blockMarker = new BlockMarker();
+    public static final BlockMarker blockMarker = new BlockMarker.BlockFlexMarker();
     private static final Marker instance;
 
     static {

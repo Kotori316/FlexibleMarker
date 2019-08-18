@@ -140,4 +140,30 @@ public abstract class BlockMarker extends Block implements ITileEntityProvider {
             Optional.ofNullable((TileFlexMarker) worldIn.getTileEntity(pos)).ifPresent(t -> t.init(EnumFacing.fromAngle(placer.getRotationYawHead())));
         }
     }
+
+    public static class Block16Marker extends BlockMarker {
+        private static final Range RANGE = new Range(0, 360);
+
+        public Block16Marker() {
+            super("marker16", "marker16");
+        }
+
+        @Override
+        protected boolean openGUI(World worldIn, BlockPos pos, EntityPlayer playerIn) {
+            return false;
+        }
+
+        @Override
+        public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+            float angle = RANGE.convert(placer.getRotationYawHead());
+            EnumFacing.AxisDirection z = angle < 90 || angle >= 270 ? EnumFacing.AxisDirection.POSITIVE : EnumFacing.AxisDirection.NEGATIVE;
+            EnumFacing.AxisDirection x = angle > 180 ? EnumFacing.AxisDirection.POSITIVE : EnumFacing.AxisDirection.NEGATIVE;
+            Optional.ofNullable((Tile16Marker) worldIn.getTileEntity(pos)).ifPresent(t -> t.init(x, z));
+        }
+
+        @Override
+        public TileEntity createNewTileEntity(World worldIn, int meta) {
+            return new Tile16Marker();
+        }
+    }
 }

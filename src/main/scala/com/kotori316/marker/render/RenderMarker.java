@@ -15,7 +15,7 @@ import com.kotori316.marker.TileFlexMarker;
 
 public class RenderMarker extends FastTESR<TileFlexMarker> {
     private static RenderMarker ourInstance = new RenderMarker();
-    private TextureAtlasSprite spriteRed, spriteBlue;
+    public TextureAtlasSprite spriteRed, spriteBlue;
 
     public static RenderMarker getInstance() {
         return ourInstance;

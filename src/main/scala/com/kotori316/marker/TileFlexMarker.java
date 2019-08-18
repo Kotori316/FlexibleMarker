@@ -30,7 +30,7 @@ import com.kotori316.marker.render.Box;
 @net.minecraftforge.fml.common.Optional.Interface(modid = TileFlexMarker.BC_TILE_ID, iface = "buildcraft.api.tiles.ITileAreaProvider")
 @net.minecraftforge.fml.common.Optional.Interface(modid = TileFlexMarker.BC_TILE_ID, iface = "buildcraft.api.tiles.IDebuggable")
 @net.minecraftforge.fml.common.Optional.Interface(modid = "quarryplus", iface = "com.yogpc.qp.tile.IMarker")
-public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDebuggable, IMarker {
+public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDebuggable, IMarker, IAreaConfigurable {
 
     public static final String BC_CORE_ID = "buildcraftlib"; // BuildCraftAPI|core - buildcraftapi_core
     public static final String BC_TILE_ID = "buildcraftlib"; // BuildCraftAPI|tiles - buildcraftapi_tiles
@@ -80,6 +80,7 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
         }
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public Runnable setMinMax(BlockPos min, BlockPos max) {
         return () -> {

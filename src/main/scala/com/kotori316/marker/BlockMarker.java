@@ -150,7 +150,8 @@ public abstract class BlockMarker extends Block implements ITileEntityProvider {
 
         @Override
         protected boolean openGUI(World worldIn, BlockPos pos, EntityPlayer playerIn) {
-            return false;
+            playerIn.openGui(Marker.getInstance(), GuiHandler.Marker16_ID, worldIn, pos.getX(), pos.getY(), pos.getZ());
+            return true;
         }
 
         @Override

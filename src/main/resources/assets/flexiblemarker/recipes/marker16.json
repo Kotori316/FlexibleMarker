@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "E",
+    "T"
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "flexiblemarker:marker"
+    }
+  },
+  "result": {
+    "item": "flexiblemarker:marker16",
+    "count": 1
+  }
+}

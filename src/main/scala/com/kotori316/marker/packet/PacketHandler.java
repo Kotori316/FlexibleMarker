@@ -15,6 +15,7 @@ public class PacketHandler {
         int i = 0;
         wrapper.registerMessage(ButtonMessage::onReceive, ButtonMessage.class, i++, Side.SERVER);
         wrapper.registerMessage(AreaMessage::onReceive, AreaMessage.class, i++, Side.CLIENT);
+        wrapper.registerMessage(Button16Message::onReceive, Button16Message.class, i++, Side.SERVER);
         assert i >= 0;
     }
 

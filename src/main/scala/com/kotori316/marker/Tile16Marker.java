@@ -23,7 +23,10 @@ import com.kotori316.marker.render.Box;
 
 import static com.kotori316.marker.TileFlexMarker.BC_TILE_ID;
 
-public class Tile16Marker extends TileEntity implements ITileAreaProvider, IDebuggable, IMarker {
+@net.minecraftforge.fml.common.Optional.Interface(modid = TileFlexMarker.BC_TILE_ID, iface = "buildcraft.api.tiles.ITileAreaProvider")
+@net.minecraftforge.fml.common.Optional.Interface(modid = TileFlexMarker.BC_TILE_ID, iface = "buildcraft.api.tiles.IDebuggable")
+@net.minecraftforge.fml.common.Optional.Interface(modid = "quarryplus", iface = "com.yogpc.qp.tile.IMarker")
+public class Tile16Marker extends TileEntity implements ITileAreaProvider, IDebuggable, IMarker, IAreaConfigurable {
     private BlockPos min = BlockPos.ORIGIN;
     private BlockPos max = BlockPos.ORIGIN;
     @Nullable
@@ -98,6 +101,11 @@ public class Tile16Marker extends TileEntity implements ITileAreaProvider, IDebu
             .toArray(Box[]::new);
     }
 
+    @SideOnly(Side.CLIENT)
+    public int getSize() {
+        return size;
+    }
+
     // TileEntity overrides
     @Override
     public NBTTagCompound getUpdateTag() {
@@ -128,6 +136,7 @@ public class Tile16Marker extends TileEntity implements ITileAreaProvider, IDebu
         max = BlockPos.fromLong(compound.getLong("max"));
         xDirection = compound.getBoolean("x") ? EnumFacing.AxisDirection.POSITIVE : EnumFacing.AxisDirection.NEGATIVE;
         zDirection = compound.getBoolean("z") ? EnumFacing.AxisDirection.POSITIVE : EnumFacing.AxisDirection.NEGATIVE;
+        size = compound.getInteger("size");
         if (hasWorld()) {
             setRender();
         }
@@ -139,6 +148,7 @@ public class Tile16Marker extends TileEntity implements ITileAreaProvider, IDebu
         compound.setLong("max", max.toLong());
         compound.setBoolean("x", xDirection == EnumFacing.AxisDirection.POSITIVE);
         compound.setBoolean("z", zDirection == EnumFacing.AxisDirection.POSITIVE);
+        compound.setInteger("size", size);
         return super.writeToNBT(compound);
     }
 
@@ -190,5 +200,15 @@ public class Tile16Marker extends TileEntity implements ITileAreaProvider, IDebu
             "Max: x=" + max.getX() + " y=" + max.getY() + " z=" + max.getZ(),
         };
         left.addAll(Arrays.asList(strings));
+    }
+
+    @Override
+    public Runnable setMinMax(BlockPos min, BlockPos max) {
+        return () -> {
+            this.max = max;
+            this.min = min;
+            setRender();
+            size = (max.getX() - min.getX() - 1);
+        };
     }
 }

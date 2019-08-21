@@ -26,7 +26,7 @@ import net.minecraftforge.fml.ModList;
 
 import com.kotori316.marker.render.Box;
 
-public class TileFlexMarker extends TileEntity implements IMarker {
+public class TileFlexMarker extends TileEntity implements IMarker, IAreaConfigurable {
 
     public static final String BC_CORE_ID = "buildcraftlib"; // BuildCraftAPI|core - buildcraftapi_core
     public static final String BC_TILE_ID = "buildcraftlib"; // BuildCraftAPI|tiles - buildcraftapi_tiles
@@ -80,6 +80,7 @@ public class TileFlexMarker extends TileEntity implements IMarker {
         }
     }
 
+    @Override
     @OnlyIn(Dist.CLIENT)
     public Runnable setMinMax(BlockPos min, BlockPos max) {
         return () -> {

@@ -34,6 +34,7 @@ public class PacketHandler {
         int i = 0;
         INSTANCE.registerMessage(i++, ButtonMessage.class, ButtonMessage::toBytes, ButtonMessage::fromBytes, ButtonMessage::onReceive);
         INSTANCE.registerMessage(i++, AreaMessage.class, AreaMessage::toBytes, AreaMessage::fromBytes, AreaMessage::onReceive);
+        INSTANCE.registerMessage(i++, Button16Message.class, Button16Message::toBytes, Button16Message::fromBytes, Button16Message::onReceive);
         assert i >= 0;
     }
 

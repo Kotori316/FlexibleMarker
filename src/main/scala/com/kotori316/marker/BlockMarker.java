@@ -37,25 +37,26 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import com.kotori316.marker.gui.ContainerMarker;
 
-public class BlockMarker extends Block {
+public abstract class BlockMarker extends Block {
     private static final VoxelShape STANDING_Shape = VoxelShapes.create(.35, 0, .35, .65, .65, .65);
-    public static final String NAME = "marker";
 
     public final ItemBlock itemBlock;
 
-    public BlockMarker() {
+    public BlockMarker(String name) {
         super(Block.Properties.create(Material.CIRCUITS));
-        setRegistryName(Marker.modID, NAME);
+        setRegistryName(Marker.modID, name);
         this.itemBlock = new ItemBlock(this, new Item.Properties().group(ItemGroup.REDSTONE));
-        itemBlock.setRegistryName(Marker.modID, NAME);
+        itemBlock.setRegistryName(Marker.modID, name);
     }
+
+    protected abstract boolean openGUI(World worldIn, BlockPos pos, EntityPlayer playerIn);
 
     @Override
     @SuppressWarnings("deprecation")
     public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!player.isSneaking()) {
             if (!worldIn.isRemote) {
-                NetworkHooks.openGui(((EntityPlayerMP) player), new InteractionObject(), pos);
+                openGUI(worldIn, pos, player);
             }
             return true;
         }
@@ -112,10 +113,7 @@ public class BlockMarker extends Block {
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        Optional.ofNullable((TileFlexMarker) worldIn.getTileEntity(pos)).ifPresent(t -> t.init(EnumFacing.fromAngle(placer.getRotationYawHead())));
-    }
+    public abstract void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack);
 
     @Override
     public boolean hasTileEntity(IBlockState state) {
@@ -123,11 +121,62 @@ public class BlockMarker extends Block {
     }
 
     @Override
-    public TileEntity createTileEntity(IBlockState state, IBlockReader world) {
-        return Marker.TYPE.create();
+    public abstract TileEntity createTileEntity(IBlockState state, IBlockReader world);
+
+
+    public static class BlockFlexMarker extends BlockMarker {
+        public static final String NAME = "marker";
+
+        public BlockFlexMarker() {
+            super(NAME);
+        }
+
+        @Override
+        public TileEntity createTileEntity(IBlockState state, IBlockReader world) {
+            return Marker.TYPE.create();
+        }
+
+        @Override
+        protected boolean openGUI(World worldIn, BlockPos pos, EntityPlayer playerIn) {
+            NetworkHooks.openGui(((EntityPlayerMP) playerIn), new InteractionObject(), pos);
+            return true;
+        }
+
+        @Override
+        public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+            Optional.ofNullable((TileFlexMarker) worldIn.getTileEntity(pos)).ifPresent(t -> t.init(EnumFacing.fromAngle(placer.getRotationYawHead())));
+        }
+
     }
 
-    public static final String GUI_ID = Marker.modID + ":gui_" + NAME;
+    public static class Block16Marker extends BlockMarker {
+        private static final Range RANGE = new Range(0, 360);
+
+        public Block16Marker() {
+            super("marker16");
+        }
+
+        @Override
+        protected boolean openGUI(World worldIn, BlockPos pos, EntityPlayer playerIn) {
+            NetworkHooks.openGui(((EntityPlayerMP) playerIn), new InteractionObject(), pos);
+            return true;
+        }
+
+        @Override
+        public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+            float angle = RANGE.convert(placer.getRotationYawHead());
+            EnumFacing.AxisDirection z = angle < 90 || angle >= 270 ? EnumFacing.AxisDirection.POSITIVE : EnumFacing.AxisDirection.NEGATIVE;
+            EnumFacing.AxisDirection x = angle > 180 ? EnumFacing.AxisDirection.POSITIVE : EnumFacing.AxisDirection.NEGATIVE;
+            Optional.ofNullable((Tile16Marker) worldIn.getTileEntity(pos)).ifPresent(t -> t.init(x, z));
+        }
+
+        @Override
+        public TileEntity createTileEntity(IBlockState state, IBlockReader world) {
+            return Marker.TYPE16.create();
+        }
+    }
+
+    public static final String GUI_ID = Marker.modID + ":gui_" + "marker";
 
     private static class InteractionObject implements IInteractionObject {
 

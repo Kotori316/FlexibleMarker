@@ -14,7 +14,7 @@ import com.kotori316.marker.TileFlexMarker;
 
 public class RenderMarker extends TileEntityRendererFast<TileFlexMarker> {
     private static RenderMarker ourInstance = new RenderMarker();
-    private TextureAtlasSprite spriteWhite;
+    public TextureAtlasSprite spriteWhite;
 
     public static RenderMarker getInstance() {
         return ourInstance;

@@ -1,0 +1,17 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "flexiblemarker:block/marker16",
+    "textures": {
+      "texture": "flexiblemarker:blocks/marker16"
+    }
+  },
+  "variants": {
+    "": [
+      {}
+    ]
+  },
+  "inventory": [
+    {}
+  ]
+}

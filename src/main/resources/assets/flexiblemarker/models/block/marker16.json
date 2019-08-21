@@ -1,0 +1,7 @@
+{
+  "parent": "flexiblemarker:block/marker",
+  "textures": {
+    "texture": "flexiblemarker:blocks/marker16",
+    "particle": "flexiblemarker:blocks/marker16"
+  }
+}

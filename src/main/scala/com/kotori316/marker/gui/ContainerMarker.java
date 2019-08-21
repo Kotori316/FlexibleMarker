@@ -2,19 +2,18 @@ package com.kotori316.marker.gui;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-
-import com.kotori316.marker.Marker;
 
 public class ContainerMarker extends Container {
 
     public final PlayerEntity player;
     public final BlockPos pos;
 
-    public ContainerMarker(int id, PlayerEntity player, BlockPos pos) {
-        super(Marker.CONTAINER_TYPE, id);
+    public ContainerMarker(int id, PlayerEntity player, BlockPos pos, ContainerType<?> type) {
+        super(type, id);
         this.player = player;
         this.pos = pos;
         int oneBox = 18;

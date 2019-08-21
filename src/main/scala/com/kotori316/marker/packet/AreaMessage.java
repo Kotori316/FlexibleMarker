@@ -8,7 +8,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-import com.kotori316.marker.TileFlexMarker;
+import com.kotori316.marker.IAreaConfigurable;
 
 /**
  * To Client Only
@@ -46,9 +46,9 @@ public class AreaMessage {
     public void onReceive(Supplier<NetworkEvent.Context> ctx) {
         Optional.ofNullable(Minecraft.getInstance().world)
             .map(world -> world.getTileEntity(this.pos))
-            .filter(t -> t instanceof TileFlexMarker && PacketHandler.getDimId(t.getWorld()) == dim)
+            .filter(t -> t instanceof IAreaConfigurable && PacketHandler.getDimId(t.getWorld()) == dim)
             .ifPresent(entity -> {
-                TileFlexMarker marker = (TileFlexMarker) entity;
+                IAreaConfigurable marker = (IAreaConfigurable) entity;
                 ctx.get().enqueueWork(marker.setMinMax(this.min, this.max));
             });
         ctx.get().setPacketHandled(true);

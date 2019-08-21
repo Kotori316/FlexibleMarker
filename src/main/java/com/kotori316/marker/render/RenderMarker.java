@@ -33,11 +33,11 @@ public class RenderMarker extends TileEntityRendererFast<TileFlexMarker> {
         buffer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
         if (te.boxes != null) {
             for (Box box : te.boxes) {
-                box.render(buffer, spriteWhite, ColorBox.redColor());
+                box.render(buffer, spriteWhite, ColorBox.redColor);
             }
         }
         if (te.directionBox != null) {
-            te.directionBox.render(buffer, spriteWhite, ColorBox.blueColor());
+            te.directionBox.render(buffer, spriteWhite, ColorBox.blueColor);
         }
         Minecraft.getInstance().getProfiler().endSection();
     }

@@ -25,7 +25,7 @@ public class Render16Marker extends TileEntityRendererFast<Tile16Marker> {
         buffer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
         if (te.boxes != null) {
             for (Box box : te.boxes) {
-                box.render(buffer, RenderMarker.getInstance().spriteWhite, ColorBox.redColor());
+                box.render(buffer, RenderMarker.getInstance().spriteWhite, ColorBox.redColor);
             }
         }
         Minecraft.getInstance().getProfiler().endSection();

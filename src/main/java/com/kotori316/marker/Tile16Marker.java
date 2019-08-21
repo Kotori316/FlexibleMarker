@@ -1,6 +1,7 @@
 package com.kotori316.marker;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -170,9 +171,13 @@ public class Tile16Marker extends TileEntity implements /*ITileAreaProvider, IDe
 
     //    @Override
     public List<ItemStack> removeFromWorldWithItem() {
-        List<ItemStack> drops = Block.getDrops(getWorld().getBlockState(getPos()), (ServerWorld) getWorld(), getPos(), this);
-        getWorld().removeBlock(getPos(), false);
-        return drops;
+        if (world != null) {
+            List<ItemStack> drops = Block.getDrops(world.getBlockState(getPos()), (ServerWorld) world, getPos(), this);
+            world.removeBlock(getPos(), false);
+            return drops;
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     /*

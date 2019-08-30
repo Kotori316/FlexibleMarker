@@ -65,7 +65,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.0.45'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.0.74'
 //    implementation "org.scala-lang:scala-library:2.12.9"
     //implementation fg.deobf("additional-enchanted-miner:AdditionalEnchantedMiner-1.13.2:13.3.1:deobf")
 

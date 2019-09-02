@@ -14,7 +14,7 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 
-version = "3.4"
+version = "3.5"
 group = 'com.kotori316' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'Marker'
 
@@ -67,7 +67,7 @@ repositories {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.14.4-28.0.74'
 //    implementation "org.scala-lang:scala-library:2.12.9"
-    //implementation fg.deobf("additional-enchanted-miner:AdditionalEnchantedMiner-1.13.2:13.3.1:deobf")
+    implementation fileTree(dir: 'library', include: '**/*.jar')
 
     // Test Dependencies.
     testCompile("org.junit.jupiter:junit-jupiter-api:5.4.2")

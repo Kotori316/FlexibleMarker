@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
+import com.yogpc.qp.machines.base.IMarker;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
@@ -27,7 +28,7 @@ import net.minecraftforge.fml.ModList;
 
 import com.kotori316.marker.render.Box;
 
-public class TileFlexMarker extends TileEntity implements /*IMarker,*/ IAreaConfigurable {
+public class TileFlexMarker extends TileEntity implements IMarker, IAreaConfigurable {
 
     public static final String BC_CORE_ID = "buildcraftlib"; // BuildCraftAPI|core - buildcraftapi_core
     public static final String BC_TILE_ID = "buildcraftlib"; // BuildCraftAPI|tiles - buildcraftapi_tiles
@@ -193,23 +194,23 @@ public class TileFlexMarker extends TileEntity implements /*IMarker,*/ IAreaConf
         return true;
     }
 
-    //    @Override
+    @Override
     public boolean hasLink() {
         // There must always be area.
         return true;
     }
 
-    //    @Override
+    @Override
     public BlockPos min() {
         return min == BlockPos.ZERO ? getPos() : min;
     }
 
-    //    @Override
+    @Override
     public BlockPos max() {
         return max == BlockPos.ZERO ? getPos() : max;
     }
 
-    //    @Override
+    @Override
     public List<ItemStack> removeFromWorldWithItem() {
         Objects.requireNonNull(getWorld());
         NonNullList<ItemStack> list = NonNullList.create();

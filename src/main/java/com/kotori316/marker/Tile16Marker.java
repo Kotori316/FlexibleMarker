@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.yogpc.qp.machines.base.IMarker;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -22,7 +23,7 @@ import com.kotori316.marker.render.Box;
 
 import static com.kotori316.marker.TileFlexMarker.BC_TILE_ID;
 
-public class Tile16Marker extends TileEntity implements /*ITileAreaProvider, IDebuggable, IMarker,*/ IAreaConfigurable {
+public class Tile16Marker extends TileEntity implements /*ITileAreaProvider, IDebuggable,*/  IMarker, IAreaConfigurable {
     private BlockPos min = BlockPos.ZERO;
     private BlockPos max = BlockPos.ZERO;
     @Nullable
@@ -154,22 +155,22 @@ public class Tile16Marker extends TileEntity implements /*ITileAreaProvider, IDe
     }
 
     // Interface implementations
-//    @Override
+    @Override
     public boolean hasLink() {
         return true;
     }
 
-    //    @Override
+    @Override
     public BlockPos min() {
         return min == BlockPos.ZERO ? getPos() : min;
     }
 
-    //    @Override
+    @Override
     public BlockPos max() {
         return max == BlockPos.ZERO ? getPos() : max;
     }
 
-    //    @Override
+    @Override
     public List<ItemStack> removeFromWorldWithItem() {
         if (world != null) {
             List<ItemStack> drops = Block.getDrops(world.getBlockState(getPos()), (ServerWorld) world, getPos(), this);

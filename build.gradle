@@ -65,7 +65,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.1'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.1.61'
 //    implementation "org.scala-lang:scala-library:2.13.1"
     implementation fileTree(dir: 'library', include: '**/*.jar')
 

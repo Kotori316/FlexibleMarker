@@ -54,6 +54,17 @@ minecraft {
                 }
             }
         }
+        data {
+            workingDirectory project.file('Minecraft')
+            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'flexiblemarker', '--all', '--output', file('data/generated/resources/'), '--existing', sourceSets.main.resources.srcDirs[0]
+            mods {
+                flexiblemarker {
+                    source sourceSets.main
+                }
+            }
+        }
     }
 }
 repositories {
@@ -65,7 +76,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.61'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.1.76'
 //    implementation "org.scala-lang:scala-library:2.13.1"
     implementation fileTree(dir: 'library', include: '**/*.jar')
 

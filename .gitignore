@@ -9,3 +9,5 @@ gradlew.bat
 gradlew
 Minecraft
 library
+.idea
+generated/.cache

@@ -54,6 +54,17 @@ minecraft {
                 }
             }
         }
+        data {
+            workingDirectory project.file('Minecraft')
+            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'flexiblemarker', '--all', '--output', file('data/generated/resources/'), '--existing', sourceSets.main.resources.srcDirs[0]
+            mods {
+                flexiblemarker {
+                    source sourceSets.main
+                }
+            }
+        }
     }
 }
 repositories {

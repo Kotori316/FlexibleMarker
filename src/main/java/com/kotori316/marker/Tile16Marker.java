@@ -33,7 +33,7 @@ public class Tile16Marker extends TileEntity implements /*ITileAreaProvider, IDe
     private int size = 16;
 
     public Tile16Marker() {
-        super(Marker.TYPE16);
+        super(Objects.requireNonNull(Marker.TYPE16.get()));
     }
 
     public void init(Direction.AxisDirection xDirection, Direction.AxisDirection zDirection) {

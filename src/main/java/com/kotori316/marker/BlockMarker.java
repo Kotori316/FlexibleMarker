@@ -1,5 +1,6 @@
 package com.kotori316.marker;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import net.minecraft.block.Block;
@@ -15,9 +16,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -43,13 +41,8 @@ import com.kotori316.marker.gui.ContainerMarker;
 public abstract class BlockMarker extends Block {
     private static final VoxelShape STANDING_Shape = VoxelShapes.create(.35, 0, .35, .65, .65, .65);
 
-    public final BlockItem itemBlock;
-
-    public BlockMarker(String name) {
+    public BlockMarker() {
         super(Block.Properties.create(Material.MISCELLANEOUS));
-        setRegistryName(Marker.modID, name);
-        this.itemBlock = new BlockItem(this, new Item.Properties().group(ItemGroup.REDSTONE));
-        itemBlock.setRegistryName(Marker.modID, name);
     }
 
     protected abstract void openGUI(World worldIn, BlockPos pos, PlayerEntity playerIn);
@@ -131,13 +124,9 @@ public abstract class BlockMarker extends Block {
     public static class BlockFlexMarker extends BlockMarker {
         public static final String NAME = "marker";
 
-        public BlockFlexMarker() {
-            super(NAME);
-        }
-
         @Override
         public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-            return Marker.TYPE.create();
+            return Objects.requireNonNull(Marker.TYPE.get()).create();
         }
 
         @Override
@@ -154,10 +143,7 @@ public abstract class BlockMarker extends Block {
 
     public static class Block16Marker extends BlockMarker {
         private static final Range RANGE = new Range(0, 360);
-
-        public Block16Marker() {
-            super("marker16");
-        }
+        public static final String NAME = "marker16";
 
         @Override
         protected void openGUI(World worldIn, BlockPos pos, PlayerEntity playerIn) {
@@ -174,7 +160,7 @@ public abstract class BlockMarker extends Block {
 
         @Override
         public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-            return Marker.TYPE16.create();
+            return Objects.requireNonNull(Marker.TYPE16.get()).create();
         }
 
     }

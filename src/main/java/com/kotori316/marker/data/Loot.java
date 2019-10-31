@@ -3,6 +3,7 @@ package com.kotori316.marker.data;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -42,13 +43,13 @@ public class Loot extends LootTableProvider {
     private static class Blocks extends BlockLootTables {
         @Override
         protected void addTables() {
-            this.func_218492_c(Marker.blockMarker);
-            this.func_218492_c(Marker.block16Marker);
+            this.func_218492_c(Objects.requireNonNull(Marker.blockMarker.get()));
+            this.func_218492_c(Objects.requireNonNull(Marker.block16Marker.get()));
         }
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return Arrays.asList(Marker.blockMarker, Marker.block16Marker);
+            return Arrays.asList(Marker.blockMarker.get(), Marker.block16Marker.get());
         }
     }
 }

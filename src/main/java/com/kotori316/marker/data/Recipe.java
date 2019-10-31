@@ -2,6 +2,7 @@ package com.kotori316.marker.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -30,7 +31,7 @@ class Recipe extends RecipeProvider {
 
     @Override
     protected void registerRecipes(Consumer<IFinishedRecipe> p_200404_1_) {
-        IFinishedRecipe marker = new RecipeWrpper(getConsumerValue(ShapedRecipeBuilder.shapedRecipe(Marker.blockMarker)
+        IFinishedRecipe marker = new RecipeWrpper(getConsumerValue(ShapedRecipeBuilder.shapedRecipe(Objects.requireNonNull(Marker.blockMarker.get()))
             .patternLine("E")
             .patternLine("T")
             .key('E', Tags.Items.GEMS_EMERALD)
@@ -38,12 +39,12 @@ class Recipe extends RecipeProvider {
             .addCriterion("has_rs_torch", hasItem(Items.REDSTONE_TORCH))))
             .addCondition(new NotCondition(new ModLoadedCondition("buildcraftcore")));
         p_200404_1_.accept(marker);
-        ShapedRecipeBuilder.shapedRecipe(Marker.block16Marker)
+        ShapedRecipeBuilder.shapedRecipe(Objects.requireNonNull(Marker.block16Marker.get()))
             .patternLine("E")
             .patternLine("T")
             .key('E', Tags.Items.DUSTS_REDSTONE)
-            .key('T', Marker.blockMarker)
-            .addCriterion("has_marker", hasItem(Marker.blockMarker))
+            .key('T', Marker.blockMarker.get())
+            .addCriterion("has_marker", hasItem(Marker.blockMarker.get()))
             .build(p_200404_1_);
     }
 

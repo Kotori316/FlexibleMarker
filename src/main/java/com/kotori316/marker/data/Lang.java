@@ -14,8 +14,8 @@ abstract class Lang extends LanguageProvider {
     @Override
     protected void addTranslations() {
         LangData data = getLangData();
-        addBlock(() -> Marker.blockMarker, data.marker);
-        addBlock(() -> Marker.block16Marker, data.marker16);
+        addBlock(Marker.blockMarker, data.marker);
+        addBlock(Marker.block16Marker, data.marker16);
         addGuiEnrty("left", data.left);
         addGuiEnrty("right", data.right);
         addGuiEnrty("forward", data.forward);

@@ -90,7 +90,7 @@ dependencies {
     def forge_prop = loadProperties("forge_version.properties")
     minecraft(forge_prop.getProperty("forge_version"))
     if (hasGitHubToken()) {
-        implementation(fg.deobf("com.kotori316:AdditionalEnchantedMiner:15.0.2_ac4504e"))
+        implementation(fg.deobf("com.kotori316:AdditionalEnchantedMiner:${forge_prop.getProperty("quarry_version")}"))
     } else {
         implementation fileTree(dir: 'library', include: '**/*.jar')
     }

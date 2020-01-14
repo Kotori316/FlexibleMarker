@@ -15,8 +15,6 @@ public class RenderMarker extends TileEntityRenderer<TileFlexMarker> {
 
     public RenderMarker(TileEntityRendererDispatcher d) {
         super(d);
-//        MinecraftForge.EVENT_BUS.register(this);
-        // Register to mod event bus in Main class
     }
 
     @Override

@@ -4,9 +4,6 @@ run
 build
 *.iml
 *.ipr
-gradle
-gradlew.bat
-gradlew
 Minecraft
 library
 .idea

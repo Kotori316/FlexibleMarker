@@ -20,7 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -56,21 +56,15 @@ public abstract class BlockMarker extends Block {
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos,
-                                    PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        if (!player.isSneaking()) {
+    public ActionResultType func_225533_a_(BlockState state, World worldIn, BlockPos pos,
+                                           PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+        if (!player.isCrouching()) {
             if (!worldIn.isRemote) {
                 openGUI(worldIn, pos, player);
             }
-            return true;
+            return ActionResultType.SUCCESS;
         }
-        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return super.func_225533_a_(state, worldIn, pos, player, handIn, hit);
     }
 
     @Override

@@ -140,7 +140,7 @@ public class TileFlexMarker extends TileEntity implements IMarker, IAreaConfigur
         }
 
         boxes = Arrays.stream(lineBoxes).filter(Objects::nonNull)
-            .map(range -> Box.apply(range, 1d / 8d, 1d / 8d, 1d / 8d, false, false))
+            .map(range -> Box.apply(range, 1d / 8d, 1d / 8d, 1d / 8d, true, true))
             .toArray(Box[]::new);
         AxisAlignedBB bb;
         if (direction.getAxis() == Direction.Axis.X) {

@@ -1,6 +1,7 @@
 package com.kotori316.marker.render;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.math.MathHelper;
 
@@ -13,7 +14,7 @@ class BoxZ extends Box {
     }
 
     @Override
-    public void render(final BufferBuilder b, final TextureAtlasSprite sprite, final ColorBox colorBox) {
+    public void render(final IVertexBuilder b, MatrixStack matrixStack, final TextureAtlasSprite sprite, final ColorBox colorBox) {
         int count = MathHelper.floor(this.length / super.sizeZ);
         float minU = sprite.getMinU();
         float minV = sprite.getMinV();
@@ -25,7 +26,7 @@ class BoxZ extends Box {
         int green = colorBox.green;
         int blue = colorBox.blue;
         int alpha = colorBox.alpha;
-        Buffer buffer = new Buffer(b);
+        Buffer buffer = new Buffer(b, matrixStack);
         if (super.firstSide) {
             buffer.pos(super.endX + this.offX, super.endY + this.offY, super.startZ).color(red, green, blue, alpha).tex(minU, minV).lightedAndEnd();
             buffer.pos(super.endX + this.offX, super.endY - this.offY, super.startZ).color(red, green, blue, alpha).tex(maYU, minV).lightedAndEnd();

@@ -1,33 +1,34 @@
 package com.kotori316.marker.render;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.client.model.animation.TileEntityRendererFast;
 
 import com.kotori316.marker.Tile16Marker;
 
-public class Render16Marker extends TileEntityRendererFast<Tile16Marker> {
-    private static Render16Marker ourInstance = new Render16Marker();
-
-    public static Render16Marker getInstance() {
-        return ourInstance;
-    }
-
-    private Render16Marker() {
+public class Render16Marker extends TileEntityRenderer<Tile16Marker> {
+    public Render16Marker(TileEntityRendererDispatcher d) {
+        super(d);
     }
 
     @Override
-    public void renderTileEntityFast(Tile16Marker te, double x, double y, double z,
-                                     float partialTicks, int destroyStage, BufferBuilder buffer) {
+    public void func_225616_a_(Tile16Marker te, float partialTicks, MatrixStack matrix, IRenderTypeBuffer renderTypeBuffer, int otherLight, int light) {
         Minecraft.getInstance().getProfiler().startSection("marker");
         BlockPos pos = te.getPos();
-        buffer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
+        IVertexBuilder buffer = renderTypeBuffer.getBuffer(RenderType.func_228643_e_());
+        matrix.func_227860_a_();
+        matrix.func_227861_a_(-pos.getX(), -pos.getY(), -pos.getZ());
         if (te.boxes != null) {
             for (Box box : te.boxes) {
-                box.render(buffer, RenderMarker.getInstance().spriteWhite, ColorBox.redColor);
+                box.render(buffer, matrix, Resources.getInstance().spriteWhite, ColorBox.redColor);
             }
         }
+        matrix.func_227865_b_();
         Minecraft.getInstance().getProfiler().endSection();
     }
 

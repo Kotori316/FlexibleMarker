@@ -4,7 +4,7 @@
     "name": "FlexibleMarker",
     "description": "This mod adds a marker.",
     "version": "${file.jarVersion}",
-    "mcversion": "1.14.4",
+    "mcversion": "1.15.1",
     "url": "https://github.com/Kotori316/FlexibleMarker",
     "authors": [ "Kotori" ],
     "dependencies": [ ]

@@ -1,6 +1,7 @@
 package com.kotori316.marker.render;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
@@ -27,7 +28,7 @@ public class Box {
     final double offZ;
     final double maxSize;
 
-    public void render(final BufferBuilder buffer, final TextureAtlasSprite sprite, final ColorBox colorBox) {
+    public void render(final IVertexBuilder buffer, final MatrixStack matrixStack, final TextureAtlasSprite sprite, final ColorBox colorBox) {
         double n1X = this.dx;
         double n1Y = Box.normalY(this.dx, this.dy, this.dz);
         double n1Z = this.dz;
@@ -35,11 +36,11 @@ public class Box {
         double n2X = this.dy * n1Z - this.dz * n1Y;
         double n2Z = this.dx * n1Y - this.dy * n1X;
         double n2Size = Math.sqrt(n2X * n2X + n2Z * n2Z);
-        this.renderInternal(buffer, sprite, n1X / n1Size / (double) 2, n1Y / n1Size / (double) 2, n1Z / n1Size / (double) 2, n2X / n2Size / (double) 2, n2Z / n2Size / (double) 2, colorBox.alpha, colorBox.red, colorBox.green, colorBox.blue);
+        this.renderInternal(buffer, matrixStack, sprite, n1X / n1Size / (double) 2, n1Y / n1Size / (double) 2, n1Z / n1Size / (double) 2, n2X / n2Size / (double) 2, n2Z / n2Size / (double) 2, colorBox.alpha, colorBox.red, colorBox.green, colorBox.blue);
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
-    protected final void renderInternal(final BufferBuilder b, final TextureAtlasSprite sprite, final double n1X, final double n1Y, final double n1Z, final double n2X, final double n2Z, final int alpha, final int red, final int green, final int blue) {
+    protected final void renderInternal(final IVertexBuilder b, final MatrixStack matrixStack, final TextureAtlasSprite sprite, final double n1X, final double n1Y, final double n1Z, final double n2X, final double n2Z, final int alpha, final int red, final int green, final int blue) {
         double eX = this.dx / this.length * this.sizeX;
         double eY = this.dy / this.length * this.sizeY;
         double eZ = this.dz / this.length * this.sizeZ;
@@ -55,7 +56,7 @@ public class Box {
         double e4X = this.startX + n1X * this.sizeX - n2X * this.sizeX;
         double e4Y = e1Y;
         double e4Z = this.startZ + n1Z * this.sizeZ - n2Z * this.sizeZ;
-        Buffer buffer = new Buffer(b);
+        Buffer buffer = new Buffer(b, matrixStack);
         if (this.firstSide) {
             buffer.pos(e1X, e1Y, e1Z).color(red, green, blue, alpha).tex(sprite.getMinU(), sprite.getMinV()).lightedAndEnd();
             buffer.pos(e2X, e2Y, e2Z).color(red, green, blue, alpha).tex(sprite.getMaxU(), sprite.getMinV()).lightedAndEnd();

@@ -99,7 +99,7 @@ public class Tile16Marker extends TileEntity implements /*ITileAreaProvider, IDe
         }
 
         boxes = Arrays.stream(lineBoxes).filter(Objects::nonNull)
-            .map(range -> Box.apply(range, 1d / 8d, 1d / 8d, 1d / 8d, false, false))
+            .map(range -> Box.apply(range, 1d / 8d, 1d / 8d, 1d / 8d, true, true))
             .toArray(Box[]::new);
     }
 

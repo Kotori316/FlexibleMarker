@@ -22,6 +22,7 @@ import com.kotori316.marker.gui.GuiMarker;
 import com.kotori316.marker.packet.PacketHandler;
 import com.kotori316.marker.render.Render16Marker;
 import com.kotori316.marker.render.RenderMarker;
+import com.kotori316.marker.render.Resources;
 
 @Mod(Marker.modID)
 public class Marker {
@@ -49,9 +50,9 @@ public class Marker {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void clientInit(FMLClientSetupEvent event) {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileFlexMarker.class, RenderMarker.getInstance());
-        ClientRegistry.bindTileEntitySpecialRenderer(Tile16Marker.class, Render16Marker.getInstance());
-        FMLJavaModLoadingContext.get().getModEventBus().register(RenderMarker.getInstance());
+        ClientRegistry.bindTileEntityRenderer(TYPE, RenderMarker::new);
+        ClientRegistry.bindTileEntityRenderer(TYPE16, Render16Marker::new);
+        FMLJavaModLoadingContext.get().getModEventBus().register(Resources.getInstance());
         ScreenManager.registerFactory(CONTAINER_TYPE, GuiMarker::new);
         ScreenManager.registerFactory(CONTAINER16_TYPE, Gui16Marker::new);
     }

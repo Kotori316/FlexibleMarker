@@ -1,5 +1,6 @@
 package com.kotori316.marker;
 
+import com.mojang.datafixers.DSL;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
@@ -28,14 +29,6 @@ import com.kotori316.marker.render.Resources;
 public class Marker {
     public static final String modID = "flexiblemarker";
     public static final String ModName = "FlexibleMarker";
-    public static final BlockMarker blockMarker = new BlockMarker.BlockFlexMarker();
-    public static final BlockMarker block16Marker = new BlockMarker.Block16Marker();
-    public static final TileEntityType<TileFlexMarker> TYPE = TileEntityType.Builder.create(TileFlexMarker::new, blockMarker).build(null);
-    public static final TileEntityType<Tile16Marker> TYPE16 = TileEntityType.Builder.create(Tile16Marker::new, block16Marker).build(null);
-    public static final ContainerType<ContainerMarker> CONTAINER_TYPE = IForgeContainerType.create((windowId, inv, data) ->
-        new ContainerMarker(windowId, inv.player, data.readBlockPos(), Marker.CONTAINER_TYPE));
-    public static final ContainerType<ContainerMarker> CONTAINER16_TYPE = IForgeContainerType.create((windowId, inv, data) ->
-        new ContainerMarker(windowId, inv.player, data.readBlockPos(), Marker.CONTAINER16_TYPE));
 
     public Marker() {
         FMLJavaModLoadingContext.get().getModEventBus().register(this);
@@ -50,34 +43,45 @@ public class Marker {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void clientInit(FMLClientSetupEvent event) {
-        ClientRegistry.bindTileEntityRenderer(TYPE, RenderMarker::new);
-        ClientRegistry.bindTileEntityRenderer(TYPE16, Render16Marker::new);
+        ClientRegistry.bindTileEntityRenderer(Entries.TYPE, RenderMarker::new);
+        ClientRegistry.bindTileEntityRenderer(Entries.TYPE16, Render16Marker::new);
         FMLJavaModLoadingContext.get().getModEventBus().register(Resources.getInstance());
-        ScreenManager.registerFactory(CONTAINER_TYPE, GuiMarker::new);
-        ScreenManager.registerFactory(CONTAINER16_TYPE, Gui16Marker::new);
+        ScreenManager.registerFactory(Entries.CONTAINER_TYPE, GuiMarker::new);
+        ScreenManager.registerFactory(Entries.CONTAINER16_TYPE, Gui16Marker::new);
     }
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event) {
-        event.getRegistry().register(blockMarker);
-        event.getRegistry().register(block16Marker);
+        event.getRegistry().register(Entries.blockMarker);
+        event.getRegistry().register(Entries.block16Marker);
     }
 
     @SubscribeEvent
     public void registerTile(RegistryEvent.Register<TileEntityType<?>> event) {
-        event.getRegistry().register(TYPE.setRegistryName(modID + ":flexiblemarker"));
-        event.getRegistry().register(TYPE16.setRegistryName(modID + ":marker16"));
+        event.getRegistry().register(Entries.TYPE.setRegistryName(modID + ":flexiblemarker"));
+        event.getRegistry().register(Entries.TYPE16.setRegistryName(modID + ":marker16"));
     }
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().register(blockMarker.itemBlock);
-        event.getRegistry().register(block16Marker.itemBlock);
+        event.getRegistry().register(Entries.blockMarker.itemBlock);
+        event.getRegistry().register(Entries.block16Marker.itemBlock);
     }
 
     @SubscribeEvent
     public void registerContainer(RegistryEvent.Register<ContainerType<?>> event) {
-        event.getRegistry().register(CONTAINER_TYPE.setRegistryName(BlockMarker.GUI_ID));
-        event.getRegistry().register(CONTAINER16_TYPE.setRegistryName(BlockMarker.GUI16_ID));
+        event.getRegistry().register(Entries.CONTAINER_TYPE.setRegistryName(BlockMarker.GUI_ID));
+        event.getRegistry().register(Entries.CONTAINER16_TYPE.setRegistryName(BlockMarker.GUI16_ID));
+    }
+
+    public static class Entries {
+        public static final BlockMarker blockMarker = new BlockMarker.BlockFlexMarker();
+        public static final TileEntityType<TileFlexMarker> TYPE = TileEntityType.Builder.create(TileFlexMarker::new, blockMarker).build(DSL.nilType());
+        public static final BlockMarker block16Marker = new BlockMarker.Block16Marker();
+        public static final TileEntityType<Tile16Marker> TYPE16 = TileEntityType.Builder.create(Tile16Marker::new, block16Marker).build(DSL.nilType());
+        public static final ContainerType<ContainerMarker> CONTAINER_TYPE = IForgeContainerType.create((windowId, inv, data) ->
+            new ContainerMarker(windowId, inv.player, data.readBlockPos(), Entries.CONTAINER_TYPE));
+        public static final ContainerType<ContainerMarker> CONTAINER16_TYPE = IForgeContainerType.create((windowId, inv, data) ->
+            new ContainerMarker(windowId, inv.player, data.readBlockPos(), Entries.CONTAINER16_TYPE));
     }
 }

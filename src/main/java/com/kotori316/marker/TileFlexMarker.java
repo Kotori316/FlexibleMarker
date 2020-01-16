@@ -43,7 +43,7 @@ public class TileFlexMarker extends TileEntity implements IMarker, IAreaConfigur
     private boolean bcLoaded = ModList.get().isLoaded(BC_TILE_ID); // ModAPIManager.INSTANCE.hasAPI("buildcraftapi_tiles");
 
     public TileFlexMarker() {
-        super(Marker.TYPE);
+        super(Marker.Entries.TYPE);
     }
 
     public void init(Direction facing) {

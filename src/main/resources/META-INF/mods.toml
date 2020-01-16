@@ -23,3 +23,9 @@ This mod adds a marker, which can change the area by GUI.
     versionRange="[1.15.1,)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.flexiblemarker]]
+    modId="quarryplus"
+    mandatory=true
+    versionRange="[15.0.0,)"
+    ordering="NONE"
+    side="BOTH"

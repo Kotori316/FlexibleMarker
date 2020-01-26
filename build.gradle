@@ -1,3 +1,6 @@
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
@@ -15,6 +18,10 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 
 version = "3.6"
+if (inCI()) {
+    // In remote CI/CD environment
+    version = (version + "_" + System.getenv("GITHUB_SHA").substring(0, 7))
+}
 group = 'com.kotori316' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'Marker'
 
@@ -57,17 +64,36 @@ minecraft {
     }
 }
 repositories {
-    maven {
-        // Location of LargeFluidTank
-        name 'curseforge'
-        url 'https://minecraft.curseforge.com/api/maven/'
+    if (hasGitHubToken()) {
+        maven {
+            name = "GitHub Quarry Repository"
+            url = uri("https://maven.pkg.github.com/Kotori316/QuarryPlus")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR") ?: ""
+                password = project.findProperty("githubToken") ?: System.getenv("REPO_TOKEN") ?: ""
+            }
+        }
+    } else {
+        maven {
+            // Location of QuarryPlus
+            name 'curseforge'
+            url 'https://minecraft.curseforge.com/api/maven/'
+        }
     }
+}
+
+private boolean hasGitHubToken() {
+    return project.hasProperty("githubToken") || System.getenv("REPO_TOKEN") != null
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.14.4-28.1.108'
 //    implementation "org.scala-lang:scala-library:2.13.1"
-    implementation fileTree(dir: 'library', include: '**/*.jar')
+    if (hasGitHubToken()) {
+        implementation(fg.deobf("com.kotori316:AdditionalEnchantedMiner:14.1.6"))
+    } else {
+        implementation fileTree(dir: 'library', include: '**/*.jar')
+    }
 
     // Test Dependencies.
     testCompile("org.junit.jupiter:junit-jupiter-api:5.4.2")
@@ -75,6 +101,7 @@ dependencies {
 }
 
 jar {
+    def timeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ")
     manifest {
         attributes([
                 "Specification-Title"     : project.name,
@@ -83,7 +110,7 @@ jar {
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : "${version}",
                 "Implementation-Vendor"   : "Kotori316",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Implementation-Timestamp": ZonedDateTime.now().format(timeFormat)
         ])
     }
 }
@@ -121,5 +148,18 @@ task signJar2() {
     }
 }
 
-// Runs this task automatically when build is ran.
-assemble.dependsOn(signJar2)
+if (!inCI()) {
+    // Runs this task automatically when build is ran.
+    assemble.dependsOn(signJar2)
+}
+
+private static boolean inCI() {
+    Boolean.valueOf(System.getenv("GITHUB_ACTIONS"))
+}
+
+task checkParamater() {
+    doLast {
+        println "Has GitHub Token: ${hasGitHubToken()}"
+        println "In CI:  ${inCI()}"
+    }
+}

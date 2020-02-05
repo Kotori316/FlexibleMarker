@@ -5,6 +5,8 @@ import net.minecraft.block.Block;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -28,6 +30,7 @@ import com.kotori316.marker.render.RenderMarker;
 public class Marker {
     public static final String modID = "flexiblemarker";
     public static final String ModName = "FlexibleMarker";
+    public static final Group ITEM_GROUP = new Group();
 
     public Marker() {
         FMLJavaModLoadingContext.get().getModEventBus().register(this);
@@ -82,5 +85,17 @@ public class Marker {
             new ContainerMarker(windowId, inv.player, data.readBlockPos(), ModObjects.CONTAINER_TYPE));
         public static final ContainerType<ContainerMarker> CONTAINER16_TYPE = IForgeContainerType.create((windowId, inv, data) ->
             new ContainerMarker(windowId, inv.player, data.readBlockPos(), ModObjects.CONTAINER16_TYPE));
+        public static final RemoteControlItem remoteControlItem = new RemoteControlItem();
+    }
+
+    public static final class Group extends ItemGroup {
+        public Group() {
+            super(modID);
+        }
+
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(ModObjects.blockMarker);
+        }
     }
 }

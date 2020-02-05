@@ -17,7 +17,6 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -48,7 +47,7 @@ public abstract class BlockMarker extends Block {
     public BlockMarker(String name) {
         super(Block.Properties.create(Material.MISCELLANEOUS));
         setRegistryName(Marker.modID, name);
-        this.itemBlock = new BlockItem(this, new Item.Properties().group(ItemGroup.REDSTONE));
+        this.itemBlock = new BlockItem(this, new Item.Properties().group(Marker.ITEM_GROUP));
         itemBlock.setRegistryName(Marker.modID, name);
     }
 

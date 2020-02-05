@@ -137,12 +137,12 @@ public abstract class BlockMarker extends Block {
 
         @Override
         public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-            return Marker.TYPE.create();
+            return Marker.ModObjects.TYPE.create();
         }
 
         @Override
         protected void openGUI(World worldIn, BlockPos pos, PlayerEntity playerIn) {
-            NetworkHooks.openGui(((ServerPlayerEntity) playerIn), new InteractionObject(pos, Marker.CONTAINER_TYPE), pos);
+            NetworkHooks.openGui(((ServerPlayerEntity) playerIn), new InteractionObject(pos, Marker.ModObjects.CONTAINER_TYPE), pos);
         }
 
         @Override
@@ -161,7 +161,7 @@ public abstract class BlockMarker extends Block {
 
         @Override
         protected void openGUI(World worldIn, BlockPos pos, PlayerEntity playerIn) {
-            NetworkHooks.openGui(((ServerPlayerEntity) playerIn), new InteractionObject(pos, Marker.CONTAINER16_TYPE), pos);
+            NetworkHooks.openGui(((ServerPlayerEntity) playerIn), new InteractionObject(pos, Marker.ModObjects.CONTAINER16_TYPE), pos);
         }
 
         @Override
@@ -174,7 +174,7 @@ public abstract class BlockMarker extends Block {
 
         @Override
         public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-            return Marker.TYPE16.create();
+            return Marker.ModObjects.TYPE16.create();
         }
 
     }

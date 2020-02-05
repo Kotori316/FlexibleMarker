@@ -68,6 +68,7 @@ public class Marker {
     public void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry().register(ModObjects.blockMarker.itemBlock);
         event.getRegistry().register(ModObjects.block16Marker.itemBlock);
+        event.getRegistry().register(ModObjects.remoteControlItem);
     }
 
     @SubscribeEvent

@@ -16,13 +16,13 @@ public class Caps {
         public static final Capability<IRemotePowerOn> REMOTE_POWER_ON_CAPABILITY = null;
     }
 
-    private static boolean isModLoaded() {
+    public static boolean isQuarryModLoaded() {
         return ModList.get().isLoaded("quarryplus");
     }
 
     @SuppressWarnings("ConstantConditions")
     public static Optional<Capability<IMarker>> markerCapability() {
-        if (isModLoaded())
+        if (isQuarryModLoaded())
             return Optional.ofNullable(QuarryPlus.MARKER_CAPABILITY);
         else
             return Optional.empty();
@@ -30,7 +30,7 @@ public class Caps {
 
     @SuppressWarnings("ConstantConditions")
     public static Optional<Capability<IRemotePowerOn>> remotePowerOnCapability() {
-        if (isModLoaded())
+        if (isQuarryModLoaded())
             return Optional.ofNullable(QuarryPlus.REMOTE_POWER_ON_CAPABILITY);
         else
             return Optional.empty();

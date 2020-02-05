@@ -252,7 +252,10 @@ public class TileFlexMarker extends TileEntity implements IMarker, IAreaConfigur
                 return TilesAPI.CAP_TILE_AREA_PROVIDER.cast(this);
             }
         }*/
-        return super.getCapability(cap, side);
+        return Caps.markerCapability()
+            .map(c -> c.orEmpty(cap, LazyOptional.of(() -> this)))
+            .filter(LazyOptional::isPresent)
+            .orElse(super.getCapability(cap, side));
     }
 
     public enum Movable {

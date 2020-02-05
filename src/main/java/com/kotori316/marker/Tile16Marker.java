@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.yogpc.qp.machines.base.IMarker;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -17,6 +18,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.ModList;
 
 import com.kotori316.marker.render.Box;
@@ -152,6 +155,15 @@ public class Tile16Marker extends TileEntity implements /*ITileAreaProvider, IDe
         compound.putBoolean("z", zDirection == Direction.AxisDirection.POSITIVE);
         compound.putInt("size", size);
         return super.write(compound);
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        return Caps.markerCapability()
+            .map(c -> c.orEmpty(cap, LazyOptional.of(() -> this)))
+            .filter(LazyOptional::isPresent)
+            .orElse(super.getCapability(cap, side));
     }
 
     // Interface implementations

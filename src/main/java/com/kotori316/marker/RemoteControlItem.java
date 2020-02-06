@@ -104,19 +104,29 @@ public class RemoteControlItem extends Item {
 
 
     public static final Function<BlockPos, ITextComponent> convertPosText = p -> new TranslationTextComponent("tooltip.flexiblemarker.remote_pos", p.getX(), p.getY(), p.getZ());
-    public static final Function<Area, ITextComponent> convertAreaText = a -> new TranslationTextComponent("tooltip.flexiblemarker.area", a);
 
     public static List<? extends ITextComponent> areaText(ItemStack stack) {
-        return getArea(stack)
-            .map(convertAreaText)
-            .map(Collections::singletonList)
-            .orElse(Collections.emptyList());
+        if (Caps.isQuarryModLoaded())
+            return getArea(stack)
+                .map(AreaComponent.convertAreaText)
+                .map(Collections::singletonList)
+                .orElse(Collections.emptyList());
+        else
+            return Collections.emptyList();
+    }
+
+    private static class AreaComponent {
+        public static final Function<Area, ITextComponent> convertAreaText = a -> new TranslationTextComponent("tooltip.flexiblemarker.area", a);
+
+        private static Optional<Area> getAreaInternal(ItemStack stack) {
+            return Optional.ofNullable(stack.getChildTag(NBT_AREA))
+                .map(Area::areaLoad);
+        }
     }
 
     public static Optional<Area> getArea(ItemStack stack) {
         if (Caps.isQuarryModLoaded() && !stack.isEmpty()) {
-            return Optional.ofNullable(stack.getChildTag(NBT_AREA))
-                .map(Area::areaLoad);
+            return AreaComponent.getAreaInternal(stack);
         } else {
             return Optional.empty();
         }

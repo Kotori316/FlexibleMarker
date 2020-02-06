@@ -1,32 +1,23 @@
 package com.kotori316.marker;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
-import com.yogpc.qp.machines.base.IMarker;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.ModList;
 
 import com.kotori316.marker.render.Box;
 
 import static com.kotori316.marker.TileFlexMarker.BC_TILE_ID;
 
-public class Tile16Marker extends TileEntity implements /*ITileAreaProvider, IDebuggable,*/  IMarker, IAreaConfigurable {
+public class Tile16Marker extends TileEntity implements /*ITileAreaProvider, IDebuggable, IMarker,*/ IAreaConfigurable {
     private BlockPos min = BlockPos.ZERO;
     private BlockPos max = BlockPos.ZERO;
     @Nullable
@@ -157,40 +148,14 @@ public class Tile16Marker extends TileEntity implements /*ITileAreaProvider, IDe
         return super.write(compound);
     }
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return Caps.markerCapability()
-            .map(c -> c.orEmpty(cap, LazyOptional.of(() -> this)))
-            .filter(LazyOptional::isPresent)
-            .orElse(super.getCapability(cap, side));
-    }
-
     // Interface implementations
-    @Override
-    public boolean hasLink() {
-        return true;
-    }
 
-    @Override
     public BlockPos min() {
         return min == BlockPos.ZERO ? getPos() : min;
     }
 
-    @Override
     public BlockPos max() {
         return max == BlockPos.ZERO ? getPos() : max;
-    }
-
-    @Override
-    public List<ItemStack> removeFromWorldWithItem() {
-        if (world != null) {
-            List<ItemStack> drops = Block.getDrops(world.getBlockState(getPos()), (ServerWorld) world, getPos(), this);
-            world.removeBlock(getPos(), false);
-            return drops;
-        } else {
-            return Collections.emptyList();
-        }
     }
 
     /*

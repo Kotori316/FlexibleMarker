@@ -1,25 +1,19 @@
 package com.kotori316.marker;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-import com.yogpc.qp.machines.base.IMarker;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -28,7 +22,7 @@ import net.minecraftforge.fml.ModList;
 
 import com.kotori316.marker.render.Box;
 
-public class TileFlexMarker extends TileEntity implements IMarker, IAreaConfigurable {
+public class TileFlexMarker extends TileEntity implements IAreaConfigurable {
 
     public static final String BC_CORE_ID = "buildcraftlib"; // BuildCraftAPI|core - buildcraftapi_core
     public static final String BC_TILE_ID = "buildcraftlib"; // BuildCraftAPI|tiles - buildcraftapi_tiles
@@ -194,29 +188,12 @@ public class TileFlexMarker extends TileEntity implements IMarker, IAreaConfigur
         return true;
     }
 
-    @Override
-    public boolean hasLink() {
-        // There must always be area.
-        return true;
-    }
-
-    @Override
     public BlockPos min() {
         return min == BlockPos.ZERO ? getPos() : min;
     }
 
-    @Override
     public BlockPos max() {
         return max == BlockPos.ZERO ? getPos() : max;
-    }
-
-    @Override
-    public List<ItemStack> removeFromWorldWithItem() {
-        Objects.requireNonNull(getWorld());
-        NonNullList<ItemStack> list = NonNullList.create();
-        Block.getDrops(getWorld().getBlockState(getPos()), ((ServerWorld) getWorld()), getPos(), this);
-        getWorld().removeBlock(getPos(), false);
-        return list;
     }
 
     /*@Override
@@ -252,10 +229,7 @@ public class TileFlexMarker extends TileEntity implements IMarker, IAreaConfigur
                 return TilesAPI.CAP_TILE_AREA_PROVIDER.cast(this);
             }
         }*/
-        return Caps.markerCapability()
-            .map(c -> c.orEmpty(cap, LazyOptional.of(() -> this)))
-            .filter(LazyOptional::isPresent)
-            .orElse(super.getCapability(cap, side));
+        return super.getCapability(cap, side);
     }
 
     public enum Movable {

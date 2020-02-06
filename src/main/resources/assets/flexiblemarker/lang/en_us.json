@@ -1,8 +1,10 @@
 {
   "block.flexiblemarker.marker": "Flexible Marker",
   "block.flexiblemarker.marker16": "Chunk Marker",
-  "tooltip.flexiblemarker.area": "Area %s",
-  "tooltip.flexiblemarker.remote_pos": "Pos %s, %s, %s",
+  "item.flexiblemarker.remote_controller": "Remote Controller",
+  "tooltip.flexiblemarker.area": "Area (%s, %s, %s) -> (%s, %s, %s)",
+  "tooltip.flexiblemarker.remote_pos": "Pos %s, %s, %s in %s",
+  "itemGroup.flexiblemarker": "Flexible Marker",
   "gui.left": "Left",
   "gui.forward": "Forward",
   "gui.right": "Right"

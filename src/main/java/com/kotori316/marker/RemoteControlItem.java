@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.mojang.datafixers.Dynamic;
 import com.yogpc.qp.machines.base.Area;
 import com.yogpc.qp.machines.base.IMarker;
 import com.yogpc.qp.machines.base.IRemotePowerOn;
@@ -14,10 +15,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.LongNBT;
+import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -40,12 +41,13 @@ public class RemoteControlItem extends Item {
     @Override
     public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
         if (Caps.isQuarryModLoaded()) {
-            TileEntity tileEntity = context.getWorld().getTileEntity(context.getPos());
+            World world = context.getWorld();
+            TileEntity tileEntity = world.getTileEntity(context.getPos());
             if (tileEntity != null) {
                 Optional<LazyOptional<IMarker>> maybeMarker = Caps.markerCapability().map(c -> tileEntity.getCapability(c, context.getFace()).filter(IMarker::hasLink)).filter(LazyOptional::isPresent);
                 Optional<LazyOptional<IRemotePowerOn>> maybeRemoteControllable = Caps.remotePowerOnCapability().map(c -> tileEntity.getCapability(c, context.getFace())).filter(LazyOptional::isPresent);
                 if (maybeMarker.isPresent()) {
-                    if (!context.getWorld().isRemote) {
+                    if (!world.isRemote && world.getServer() != null) {
                         maybeMarker.flatMap(l -> l.map(m -> Area.posToArea(m.min(), m.max())).map(Optional::of).orElse(getArea(stack)))
                             .ifPresent(area -> {
                                 setArea(stack, Area.areaToNbt().apply(area)); // Save
@@ -56,7 +58,7 @@ public class RemoteControlItem extends Item {
                                 }))); // Drop item
 
                                 getRemotePos(stack)
-                                    .map(context.getWorld()::getTileEntity)
+                                    .map(p -> world.getServer().getWorld(p.getDimension()).getTileEntity(p.getPos()))
                                     .flatMap(t -> Caps.remotePowerOnCapability().map(c -> t.getCapability(c, context.getFace())))
                                     .ifPresent(l -> l.ifPresent(r -> {
                                         LOGGER.debug("Send start request to {} with {}", r, area);
@@ -67,7 +69,7 @@ public class RemoteControlItem extends Item {
                     }
                     return ActionResultType.SUCCESS;
                 } else if (maybeRemoteControllable.isPresent()) {
-                    if (!context.getWorld().isRemote) {
+                    if (!world.isRemote) {
                         Optional<Area> optionalArea = getArea(stack);
                         if (optionalArea.isPresent()) {
                             maybeRemoteControllable.ifPresent(l -> l.ifPresent(r -> {
@@ -75,7 +77,10 @@ public class RemoteControlItem extends Item {
                                 LOGGER.debug("Send start request to {} with {}", r, optionalArea.get());
                             }));
                         } else {
-                            setRemotePos(stack, tileEntity.getPos());
+                            GlobalPos pos = GlobalPos.of(world.getDimension().getType(), tileEntity.getPos());
+                            setRemotePos(stack, pos);
+                            LOGGER.debug("New remote pos set {}.", pos);
+                            maybeRemoteControllable.ifPresent(l -> l.ifPresent(IRemotePowerOn::startWaiting));
                         }
                     }
                     return ActionResultType.SUCCESS;
@@ -102,8 +107,8 @@ public class RemoteControlItem extends Item {
         tooltip.addAll(remotePosText(stack));
     }
 
-
-    public static final Function<BlockPos, ITextComponent> convertPosText = p -> new TranslationTextComponent("tooltip.flexiblemarker.remote_pos", p.getX(), p.getY(), p.getZ());
+    public static final Function<GlobalPos, ITextComponent> convertPosText = p ->
+        new TranslationTextComponent("tooltip.flexiblemarker.remote_pos", p.getPos().getX(), p.getPos().getY(), p.getPos().getZ(), p.getDimension().getRegistryName());
 
     public static List<? extends ITextComponent> areaText(ItemStack stack) {
         if (Caps.isQuarryModLoaded())
@@ -116,7 +121,8 @@ public class RemoteControlItem extends Item {
     }
 
     private static class AreaComponent {
-        public static final Function<Area, ITextComponent> convertAreaText = a -> new TranslationTextComponent("tooltip.flexiblemarker.area", a);
+        public static final Function<Area, ITextComponent> convertAreaText = a ->
+            new TranslationTextComponent("tooltip.flexiblemarker.area", a.xMin(), a.yMin(), a.zMin(), a.xMax(), a.yMax(), a.zMax());
 
         private static Optional<Area> getAreaInternal(ItemStack stack) {
             return Optional.ofNullable(stack.getChildTag(NBT_AREA))
@@ -142,18 +148,18 @@ public class RemoteControlItem extends Item {
             .orElse(Collections.emptyList());
     }
 
-    public static Optional<BlockPos> getRemotePos(ItemStack stack) {
+    public static Optional<GlobalPos> getRemotePos(ItemStack stack) {
         if (Caps.isQuarryModLoaded() && !stack.isEmpty())
             return Optional.ofNullable(stack.getTag())
-                .filter(t -> t.contains(NBT_REMOTE_POS, Constants.NBT.TAG_LONG))
-                .map(t -> t.getLong(NBT_REMOTE_POS))
-                .map(BlockPos::fromLong);
+                .filter(t -> t.contains(NBT_REMOTE_POS))
+                .filter(t -> !t.contains(NBT_REMOTE_POS, Constants.NBT.TAG_LONG))
+                .map(t -> GlobalPos.deserialize(new Dynamic<>(NBTDynamicOps.INSTANCE, t.get(NBT_REMOTE_POS))));
         else {
             return Optional.empty();
         }
     }
 
-    public static void setRemotePos(ItemStack stack, BlockPos pos) {
-        stack.setTagInfo(NBT_REMOTE_POS, new LongNBT(pos.toLong()));
+    public static void setRemotePos(ItemStack stack, GlobalPos pos) {
+        stack.setTagInfo(NBT_REMOTE_POS, pos.serialize(NBTDynamicOps.INSTANCE));
     }
 }

@@ -1,6 +1,10 @@
 {
   "block.flexiblemarker.marker": "Flexibleなマーカー",
   "block.flexiblemarker.marker16": "Chunkっぽいマーカー",
+  "item.flexiblemarker.remote_controller": "採掘機のリモコン",
+  "tooltip.flexiblemarker.area": "エリア (%s, %s, %s) -> (%s, %s, %s)",
+  "tooltip.flexiblemarker.remote_pos": "Pos %s, %s, %s in %s",
+  "itemGroup.flexiblemarker": "Flexible Marker",
   "gui.left": "左",
   "gui.forward": "前方",
   "gui.right": "右"

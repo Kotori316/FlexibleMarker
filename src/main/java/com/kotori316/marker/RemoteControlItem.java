@@ -48,7 +48,7 @@ public class RemoteControlItem extends Item {
                 Optional<LazyOptional<IRemotePowerOn>> maybeRemoteControllable = Caps.remotePowerOnCapability().map(c -> tileEntity.getCapability(c, context.getFace())).filter(LazyOptional::isPresent);
                 if (maybeMarker.isPresent()) {
                     if (!world.isRemote && world.getServer() != null) {
-                        maybeMarker.flatMap(l -> l.map(m -> Area.posToArea(m.min(), m.max())).map(Optional::of).orElse(getArea(stack)))
+                        maybeMarker.flatMap(l -> l.map(m -> Area.posToArea(m.min(), m.max(), world.dimension.getType())).map(Optional::of).orElse(getArea(stack)))
                             .ifPresent(area -> {
                                 setArea(stack, Area.areaToNbt().apply(area)); // Save
                                 maybeMarker.ifPresent(l -> l.ifPresent(m -> m.removeFromWorldWithItem().forEach(i -> {

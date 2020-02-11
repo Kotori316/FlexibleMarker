@@ -66,6 +66,8 @@ public class RemoteControlItem extends Item {
                                     }));
                             });
                         LOGGER.debug("New area set: {}", getArea(stack));
+                        Optional.ofNullable(context.getPlayer()).ifPresent(p ->
+                            p.sendStatusMessage(new TranslationTextComponent("chat.flexiblemarker.area"), false));
                     }
                     return ActionResultType.SUCCESS;
                 } else if (maybeRemoteControllable.isPresent()) {
@@ -80,6 +82,8 @@ public class RemoteControlItem extends Item {
                             GlobalPos pos = GlobalPos.of(world.getDimension().getType(), tileEntity.getPos());
                             setRemotePos(stack, pos);
                             LOGGER.debug("New remote pos set {}.", pos);
+                            Optional.ofNullable(context.getPlayer()).ifPresent(p ->
+                                p.sendStatusMessage(new TranslationTextComponent("chat.flexiblemarker.pos", convertPosText.apply(pos)), false));
                             maybeRemoteControllable.ifPresent(l -> l.ifPresent(IRemotePowerOn::startWaiting));
                         }
                     }

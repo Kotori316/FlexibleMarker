@@ -45,11 +45,6 @@ repositories {
         url 'https://minecraft.curseforge.com/api/maven/'
     }
     maven {
-        // location of the maven that hosts JEI files
-        name = "Progwml6 maven"
-        url = "http://dvs1.progwml6.com/files/maven"
-    }
-    maven {
         name = "CoFH Maven"
         url = "http://maven.covers1624.net"
     }
@@ -57,12 +52,17 @@ repositories {
         name "BuildCraft"
         url = "https://mod-buildcraft.com/maven"
     }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "ModMaven"
+        url = "https://modmaven.k-4u.nl"
+    }
 }
 
 dependencies {
 //    compile 'org.scala-lang:scala-library:2.11.11'
 //    compile group: "com.github.bigwheel", name: "util-backports_2.12", version: "1.1"
-    deobfCompile "com.mod-buildcraft:buildcraft-main:7.99.24.1"
+    deobfCompile "com.mod-buildcraft:buildcraft-main:7.99.24.4"
     //https://minecraft.curseforge.com/api/maven/additional-enchanted-miner/AdditionalEnchantedMiner-1.12.2/0.10.8/AdditionalEnchantedMiner-1.12.2-0.10.8-deobf.jar
     deobfCompile "additional-enchanted-miner:AdditionalEnchantedMiner-1.12.2:1.0.3:deobf"
 }

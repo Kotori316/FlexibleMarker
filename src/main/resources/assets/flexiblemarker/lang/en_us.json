@@ -1,6 +1,12 @@
 {
   "block.flexiblemarker.marker": "Flexible Marker",
   "block.flexiblemarker.marker16": "Chunk Marker",
+  "item.flexiblemarker.remote_controller": "Remote Controller",
+  "chat.flexiblemarker.area": "Set new area.",
+  "chat.flexiblemarker.pos": "Set new machine pos. %s",
+  "tooltip.flexiblemarker.area": "Area (%s, %s, %s) -> (%s, %s, %s)",
+  "tooltip.flexiblemarker.remote_pos": "Pos %s, %s, %s in %s",
+  "itemGroup.flexiblemarker": "Flexible Marker",
   "gui.left": "Left",
   "gui.forward": "Forward",
   "gui.right": "Right"

@@ -5,9 +5,12 @@ import net.minecraft.block.Block;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,9 +32,11 @@ import com.kotori316.marker.render.Resources;
 public class Marker {
     public static final String modID = "flexiblemarker";
     public static final String ModName = "FlexibleMarker";
+    public static final Group ITEM_GROUP = new Group();
 
     public Marker() {
         FMLJavaModLoadingContext.get().getModEventBus().register(this);
+        MinecraftForge.EVENT_BUS.register(Caps.Event.class);
     }
 
     @SubscribeEvent
@@ -66,6 +71,7 @@ public class Marker {
     public void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry().register(Entries.blockMarker.itemBlock);
         event.getRegistry().register(Entries.block16Marker.itemBlock);
+        event.getRegistry().register(Entries.remoteControlItem);
     }
 
     @SubscribeEvent
@@ -83,5 +89,17 @@ public class Marker {
             new ContainerMarker(windowId, inv.player, data.readBlockPos(), Entries.CONTAINER_TYPE));
         public static final ContainerType<ContainerMarker> CONTAINER16_TYPE = IForgeContainerType.create((windowId, inv, data) ->
             new ContainerMarker(windowId, inv.player, data.readBlockPos(), Entries.CONTAINER16_TYPE));
+        public static final RemoteControlItem remoteControlItem = new RemoteControlItem();
+    }
+
+    public static final class Group extends ItemGroup {
+        public Group() {
+            super(modID);
+        }
+
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(Entries.blockMarker);
+        }
     }
 }

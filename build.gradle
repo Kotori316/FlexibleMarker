@@ -89,6 +89,7 @@ private boolean hasGitHubToken() {
 dependencies {
     def forge_prop = loadProperties("forge_version.properties")
     minecraft(forge_prop.getProperty("forge_version"))
+    compileOnly "org.scala-lang:scala-library:2.13.1"
     if (hasGitHubToken()) {
         implementation(fg.deobf("com.kotori316:AdditionalEnchantedMiner:${forge_prop.getProperty("quarry_version")}"))
     } else {

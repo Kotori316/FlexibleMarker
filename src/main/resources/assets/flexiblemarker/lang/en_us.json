@@ -4,6 +4,7 @@
   "item.flexiblemarker.remote_controller": "Remote Controller",
   "chat.flexiblemarker.area": "Set new area.",
   "chat.flexiblemarker.pos": "Set new machine pos. %s",
+  "chat.flexiblemarker.reset": "Reset controller configuration.",
   "tooltip.flexiblemarker.area": "Area (%s, %s, %s) -> (%s, %s, %s)",
   "tooltip.flexiblemarker.remote_pos": "Pos %s, %s, %s in %s",
   "itemGroup.flexiblemarker": "Flexible Marker",

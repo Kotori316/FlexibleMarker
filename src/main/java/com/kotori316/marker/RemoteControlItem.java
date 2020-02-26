@@ -95,6 +95,9 @@ public class RemoteControlItem extends Item {
                 if (context.func_225518_g_() && stack.hasTag()) {
                     stack.removeChildTag(NBT_REMOTE_POS);
                     stack.removeChildTag(NBT_AREA);
+                    LOGGER.debug("Reset controller setting.");
+                    Optional.ofNullable(context.getPlayer()).ifPresent(p ->
+                        p.sendStatusMessage(new TranslationTextComponent("chat.flexiblemarker.reset"), false));
                     return ActionResultType.SUCCESS;
                 } else {
                     return super.onItemUseFirst(stack, context);

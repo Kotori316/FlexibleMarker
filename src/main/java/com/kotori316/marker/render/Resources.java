@@ -25,14 +25,14 @@ public class Resources {
 
     @SubscribeEvent
     public void registerTexture(TextureStitchEvent.Pre event) {
-        if (event.getMap().func_229223_g_().equals(PlayerContainer.field_226615_c_)) {
+        if (event.getMap().getTextureLocation().equals(PlayerContainer.LOCATION_BLOCKS_TEXTURE)) {
             event.addSprite(new ResourceLocation(Marker.modID, "blocks/white"));
         }
     }
 
     @SubscribeEvent
     public void putTexture(TextureStitchEvent.Post event) {
-        if (event.getMap().func_229223_g_().equals(PlayerContainer.field_226615_c_)) {
+        if (event.getMap().getTextureLocation().equals(PlayerContainer.LOCATION_BLOCKS_TEXTURE)) {
             spriteWhite = event.getMap().getSprite(new ResourceLocation(Marker.modID, "blocks/white"));
         }
     }

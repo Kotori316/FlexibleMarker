@@ -18,12 +18,12 @@ public class RenderMarker extends TileEntityRenderer<TileFlexMarker> {
     }
 
     @Override
-    public void func_225616_a_(TileFlexMarker te, float partialTicks, MatrixStack matrix, IRenderTypeBuffer renderTypeBuffer, int otherLight, int light) {
+    public void render(TileFlexMarker te, float partialTicks, MatrixStack matrix, IRenderTypeBuffer renderTypeBuffer, int otherLight, int light) {
         Minecraft.getInstance().getProfiler().startSection("marker");
         BlockPos pos = te.getPos();
-        IVertexBuilder buffer = renderTypeBuffer.getBuffer(RenderType.func_228643_e_());
+        IVertexBuilder buffer = renderTypeBuffer.getBuffer(RenderType.getCutout());
         matrix.push();
-        matrix.func_227861_a_(-pos.getX(), -pos.getY(), -pos.getZ());
+        matrix.translate(-pos.getX(), -pos.getY(), -pos.getZ());
         if (te.boxes != null) {
             for (Box box : te.boxes) {
                 box.render(buffer, matrix, Resources.getInstance().spriteWhite, ColorBox.redColor);

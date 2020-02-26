@@ -100,7 +100,7 @@ public abstract class BlockMarker extends Block {
         Direction direction = Direction.UP;
         BlockPos blockpos = pos.offset(direction.getOpposite());
         BlockState floorState = worldIn.getBlockState(blockpos);
-        return floorState.func_224755_d(worldIn, blockpos, direction);
+        return floorState.isSolidSide(worldIn, blockpos, direction);
     }
 
     @Override

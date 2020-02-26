@@ -22,7 +22,7 @@ public class RenderMarker extends TileEntityRenderer<TileFlexMarker> {
         Minecraft.getInstance().getProfiler().startSection("marker");
         BlockPos pos = te.getPos();
         IVertexBuilder buffer = renderTypeBuffer.getBuffer(RenderType.func_228643_e_());
-        matrix.func_227860_a_();
+        matrix.push();
         matrix.func_227861_a_(-pos.getX(), -pos.getY(), -pos.getZ());
         if (te.boxes != null) {
             for (Box box : te.boxes) {
@@ -32,7 +32,7 @@ public class RenderMarker extends TileEntityRenderer<TileFlexMarker> {
         if (te.directionBox != null) {
             te.directionBox.render(buffer, matrix, Resources.getInstance().spriteWhite, ColorBox.blueColor);
         }
-        matrix.func_227865_b_();
+        matrix.pop();
         Minecraft.getInstance().getProfiler().endSection();
     }
 

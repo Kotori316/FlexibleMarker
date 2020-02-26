@@ -55,15 +55,15 @@ public abstract class BlockMarker extends Block {
 
     @Override
     @SuppressWarnings("deprecation")
-    public ActionResultType func_225533_a_(BlockState state, World worldIn, BlockPos pos,
-                                           PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos,
+                                             PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (!player.isCrouching()) {
             if (!worldIn.isRemote) {
                 openGUI(worldIn, pos, player);
             }
             return ActionResultType.SUCCESS;
         }
-        return super.func_225533_a_(state, worldIn, pos, player, handIn, hit);
+        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
 
     @Override

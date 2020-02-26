@@ -21,14 +21,14 @@ public class Render16Marker extends TileEntityRenderer<Tile16Marker> {
         Minecraft.getInstance().getProfiler().startSection("marker");
         BlockPos pos = te.getPos();
         IVertexBuilder buffer = renderTypeBuffer.getBuffer(RenderType.func_228643_e_());
-        matrix.func_227860_a_();
+        matrix.push();
         matrix.func_227861_a_(-pos.getX(), -pos.getY(), -pos.getZ());
         if (te.boxes != null) {
             for (Box box : te.boxes) {
                 box.render(buffer, matrix, Resources.getInstance().spriteWhite, ColorBox.redColor);
             }
         }
-        matrix.func_227865_b_();
+        matrix.pop();
         Minecraft.getInstance().getProfiler().endSection();
     }
 

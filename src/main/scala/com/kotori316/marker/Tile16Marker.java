@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.ITileAreaProvider;
+import buildcraft.api.tiles.TilesAPI;
 import com.yogpc.qp.tile.IMarker;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
@@ -15,6 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -126,7 +128,7 @@ public class Tile16Marker extends TileEntity implements ITileAreaProvider, IDebu
     @Override
     public List<ItemStack> removeFromWorldWithItem() {
         NonNullList<ItemStack> list = NonNullList.create();
-        Marker.blockMarker.getDrops(list, getWorld(), getPos(), getWorld().getBlockState(getPos()), 0);
+        Marker.block16Marker.getDrops(list, getWorld(), getPos(), getWorld().getBlockState(getPos()), 0);
         getWorld().setBlockToAir(getPos());
         return list;
     }
@@ -155,6 +157,27 @@ public class Tile16Marker extends TileEntity implements ITileAreaProvider, IDebu
             "Max: x=" + max.getX() + " y=" + max.getY() + " z=" + max.getZ(),
         };
         left.addAll(Arrays.asList(strings));
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        if (bcLoaded) {
+            if (capability == TilesAPI.CAP_TILE_AREA_PROVIDER) {
+                return true;
+            }
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+        if (bcLoaded) {
+            if (capability == TilesAPI.CAP_TILE_AREA_PROVIDER) {
+                return TilesAPI.CAP_TILE_AREA_PROVIDER.cast(this);
+            }
+        }
+        return super.getCapability(capability, facing);
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.kotori316.marker;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
@@ -165,7 +164,7 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     @Override
     public List<ItemStack> removeFromWorldWithItem() {
         NonNullList<ItemStack> list = NonNullList.create();
-        Marker.block16Marker.getDrops(list, getWorld(), getPos(), getWorld().getBlockState(getPos()), 0);
+        Marker.blockMarker.getDrops(list, getWorld(), getPos(), getWorld().getBlockState(getPos()), 0);
         getWorld().setBlockToAir(getPos());
         return list;
     }

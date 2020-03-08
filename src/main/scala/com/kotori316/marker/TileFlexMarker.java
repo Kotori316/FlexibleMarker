@@ -210,7 +210,7 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     @Override
     public List<ItemStack> removeFromWorldWithItem() {
         NonNullList<ItemStack> list = NonNullList.create();
-        Marker.blockMarker.getDrops(list, getWorld(), getPos(), getWorld().getBlockState(getPos()), 0);
+        Marker.block16Marker.getDrops(list, getWorld(), getPos(), getWorld().getBlockState(getPos()), 0);
         getWorld().setBlockToAir(getPos());
         return list;
     }

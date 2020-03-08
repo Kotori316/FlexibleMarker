@@ -93,7 +93,7 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
     private void setRender() {
         if (!world.isRemote)
             return;
-        boxes = IAreaConfigurable.getRenderBox(this.min, this.max);
+        boxes = IAreaConfigurable.Util.getRenderBox(this.min, this.max);
         AxisAlignedBB bb;
         if (direction.getAxis() == EnumFacing.Axis.X) {
             bb = new AxisAlignedBB(getPos().getX() - c + a, getPos().getY() + a, getPos().getZ() + a,

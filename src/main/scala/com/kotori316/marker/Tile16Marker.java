@@ -53,7 +53,7 @@ public class Tile16Marker extends TileEntity implements ITileAreaProvider, IDebu
     private void setRender() {
         if (!world.isRemote)
             return;
-        boxes = IAreaConfigurable.getRenderBox(this.min, this.max);
+        boxes = IAreaConfigurable.Util.getRenderBox(this.min, this.max);
     }
 
     @SideOnly(Side.CLIENT)

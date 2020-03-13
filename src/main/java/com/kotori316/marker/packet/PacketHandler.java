@@ -1,6 +1,7 @@
 package com.kotori316.marker.packet;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
 import net.minecraft.util.ResourceLocation;
@@ -31,11 +32,10 @@ public class PacketHandler {
     }
 
     public static void init() {
-        int i = 0;
-        INSTANCE.registerMessage(i++, ButtonMessage.class, ButtonMessage::toBytes, ButtonMessage::fromBytes, ButtonMessage::onReceive);
-        INSTANCE.registerMessage(i++, AreaMessage.class, AreaMessage::toBytes, AreaMessage::fromBytes, AreaMessage::onReceive);
-        INSTANCE.registerMessage(i++, Button16Message.class, Button16Message::toBytes, Button16Message::fromBytes, Button16Message::onReceive);
-        assert i >= 0;
+        AtomicInteger i = new AtomicInteger(0);
+        INSTANCE.registerMessage(i.getAndIncrement(), ButtonMessage.class, ButtonMessage::toBytes, ButtonMessage::fromBytes, ButtonMessage::onReceive);
+        INSTANCE.registerMessage(i.getAndIncrement(), AreaMessage.class, AreaMessage::toBytes, AreaMessage::fromBytes, AreaMessage::onReceive);
+        INSTANCE.registerMessage(i.getAndIncrement(), Button16Message.class, Button16Message::toBytes, Button16Message::fromBytes, Button16Message::onReceive);
     }
 
     public static void sendToClient(Object message, World world) {

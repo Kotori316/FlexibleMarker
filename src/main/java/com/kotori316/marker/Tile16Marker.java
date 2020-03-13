@@ -36,11 +36,16 @@ public class Tile16Marker extends TileEntity implements /*ITileAreaProvider, IDe
     }
 
     public void changeSize(int size) {
+        int y = getPos().getY();
+        changeSize(size, y, y);
+    }
+
+    public void changeSize(int size, int yMax, int yMin) {
         this.size = size;
         BlockPos edge1 = getPos().add(xDirection.getOffset() * (size + 1), 0, zDirection.getOffset() * (size + 1));
         BlockPos edge2 = getPos();
-        min = new BlockPos(Math.min(edge1.getX(), edge2.getX()), edge2.getY(), Math.min(edge1.getZ(), edge2.getZ()));
-        max = new BlockPos(Math.max(edge1.getX(), edge2.getX()), edge2.getY(), Math.max(edge1.getZ(), edge2.getZ()));
+        min = new BlockPos(Math.min(edge1.getX(), edge2.getX()), yMin, Math.min(edge1.getZ(), edge2.getZ()));
+        max = new BlockPos(Math.max(edge1.getX(), edge2.getX()), yMax, Math.max(edge1.getZ(), edge2.getZ()));
         setRender();
     }
 

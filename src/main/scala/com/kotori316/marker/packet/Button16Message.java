@@ -17,15 +17,19 @@ public class Button16Message implements IMessage {
     private BlockPos pos;
     private int dim;
     private int amount;
+    private int yMax;
+    private int yMin;
 
     @SuppressWarnings("unused")
     public Button16Message() {
     }
 
-    public Button16Message(BlockPos pos, int dim, int amount) {
+    public Button16Message(BlockPos pos, int dim, int amount, int yMax, int yMin) {
         this.pos = pos;
         this.dim = dim;
         this.amount = amount;
+        this.yMax = yMax;
+        this.yMin = yMin;
     }
 
     @Override
@@ -34,6 +38,8 @@ public class Button16Message implements IMessage {
         pos = p.readBlockPos();
         dim = p.readInt();
         amount = p.readInt();
+        yMax = p.readInt();
+        yMin = p.readInt();
     }
 
     @Override
@@ -41,6 +47,7 @@ public class Button16Message implements IMessage {
         PacketBuffer p = new PacketBuffer(buf);
         p.writeBlockPos(pos).writeInt(dim);
         p.writeInt(amount);
+        p.writeInt(yMax).writeInt(yMin);
     }
 
     public static IMessage onReceive(Button16Message message, MessageContext ctx) {
@@ -48,7 +55,7 @@ public class Button16Message implements IMessage {
         TileEntity entity = world.getTileEntity(message.pos);
         if (entity instanceof Tile16Marker && world.provider.getDimension() == message.dim) {
             Tile16Marker marker = (Tile16Marker) entity;
-            marker.changeSize(message.amount);
+            marker.changeSize(message.amount, message.yMax, message.yMin);
             return new AreaMessage(message.pos, message.dim, marker.min(), marker.max());
         }
         return null;

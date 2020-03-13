@@ -3,7 +3,8 @@
   "defaults": {
     "model": "flexiblemarker:markerplus_post",
     "textures": {
-      "texture": "flexiblemarker:blocks/marker16"
+      "texture": "flexiblemarker:blocks/marker16",
+      "particle": "flexiblemarker:blocks/marker16"
     }
   },
   "variants": {

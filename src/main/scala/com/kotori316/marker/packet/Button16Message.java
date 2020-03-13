@@ -10,7 +10,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import com.kotori316.marker.Tile16Marker;
 
-
+/**
+ * To server only.
+ */
 public class Button16Message implements IMessage {
     private BlockPos pos;
     private int dim;

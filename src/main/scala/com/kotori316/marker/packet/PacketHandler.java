@@ -1,5 +1,7 @@
 package com.kotori316.marker.packet;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -12,11 +14,10 @@ public class PacketHandler {
 
     public static void init() {
         wrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Marker.ModName);
-        int i = 0;
-        wrapper.registerMessage(ButtonMessage::onReceive, ButtonMessage.class, i++, Side.SERVER);
-        wrapper.registerMessage(AreaMessage::onReceive, AreaMessage.class, i++, Side.CLIENT);
-        wrapper.registerMessage(Button16Message::onReceive, Button16Message.class, i++, Side.SERVER);
-        assert i >= 0;
+        AtomicInteger i = new AtomicInteger(0);
+        wrapper.registerMessage(ButtonMessage::onReceive, ButtonMessage.class, i.getAndIncrement(), Side.SERVER);
+        wrapper.registerMessage(AreaMessage::onReceive, AreaMessage.class, i.getAndIncrement(), Side.CLIENT);
+        wrapper.registerMessage(Button16Message::onReceive, Button16Message.class, i.getAndIncrement(), Side.SERVER);
     }
 
     public static void sendToServer(IMessage message) {

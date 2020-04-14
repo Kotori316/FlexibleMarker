@@ -40,10 +40,13 @@ public class Marker {
         MinecraftForge.EVENT_BUS.register(getInstance());
         NetworkRegistry.INSTANCE.registerGuiHandler(getInstance(), new GuiHandler());
         PacketHandler.init();
-        if (event.getSide() == Side.CLIENT) {
-            ClientRegistry.bindTileEntitySpecialRenderer(TileFlexMarker.class, RenderMarker.getInstance());
-            ClientRegistry.bindTileEntitySpecialRenderer(Tile16Marker.class, Render16Marker.getInstance());
-        }
+    }
+
+    @Mod.EventHandler
+    @SideOnly(value = Side.CLIENT)
+    public void preClientInit(FMLPreInitializationEvent event) {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileFlexMarker.class, RenderMarker.getInstance());
+        ClientRegistry.bindTileEntitySpecialRenderer(Tile16Marker.class, Render16Marker.getInstance());
     }
 
     @Mod.InstanceFactory

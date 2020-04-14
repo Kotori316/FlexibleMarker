@@ -9,9 +9,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.kotori316.marker.IAreaConfigurable;
-import com.kotori316.marker.TileFlexMarker;
 
 /**
  * To Client Only
@@ -49,12 +50,17 @@ public class AreaMessage implements IMessage {
     }
 
     public static IMessage onReceive(AreaMessage message, MessageContext ctx) {
-        World world = Minecraft.getMinecraft().world;
+        World world = AreaMessage.world();
         TileEntity entity = world.getTileEntity(message.pos);
         if (entity instanceof IAreaConfigurable && world.provider.getDimension() == message.dim) {
             IAreaConfigurable marker = (IAreaConfigurable) entity;
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(marker.setMinMax(message.min, message.max));
         }
         return null;
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static World world() {
+        return Minecraft.getMinecraft().world;
     }
 }

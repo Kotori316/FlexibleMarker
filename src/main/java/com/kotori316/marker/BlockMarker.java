@@ -140,7 +140,8 @@ public abstract class BlockMarker extends Block {
 
         @Override
         public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-            Optional.ofNullable((TileFlexMarker) worldIn.getTileEntity(pos)).ifPresent(t -> t.init(Direction.fromAngle(placer.getRotationYawHead())));
+            float rotationYawHead = placer != null ? placer.getRotationYawHead() : 0f;
+            Optional.ofNullable((TileFlexMarker) worldIn.getTileEntity(pos)).ifPresent(t -> t.init(Direction.fromAngle(rotationYawHead)));
         }
 
     }
@@ -159,7 +160,7 @@ public abstract class BlockMarker extends Block {
 
         @Override
         public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-            float angle = RANGE.convert(placer.getRotationYawHead());
+            float angle = RANGE.convert(placer != null ? placer.getRotationYawHead() : 0f);
             Direction.AxisDirection z = angle < 90 || angle >= 270 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE;
             Direction.AxisDirection x = angle > 180 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE;
             Optional.ofNullable((Tile16Marker) worldIn.getTileEntity(pos)).ifPresent(t -> t.init(x, z));

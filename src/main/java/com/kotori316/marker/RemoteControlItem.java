@@ -60,7 +60,7 @@ public class RemoteControlItem extends Item {
                                 }))); // Drop item
 
                                 getRemotePos(stack)
-                                    .map(p -> world.getServer().getWorld(p.getDimension()).getTileEntity(p.getPos()))
+                                    .flatMap(p -> Optional.ofNullable(world.getServer()).map(w -> w.getWorld(p.getDimension()).getTileEntity(p.getPos())))
                                     .flatMap(t -> Caps.remotePowerOnCapability().map(c -> t.getCapability(c, context.getFace())))
                                     .ifPresent(l -> l.ifPresent(r -> {
                                         LOGGER.debug("Send start request to {} with {}", r, area);

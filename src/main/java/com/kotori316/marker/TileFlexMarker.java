@@ -192,7 +192,7 @@ public class TileFlexMarker extends TileEntity implements IAreaConfigurable {
         RIGHT(Direction::rotateY),
         DOWN(facing -> Direction.DOWN);
 
-        private UnaryOperator<Direction> operator;
+        private final UnaryOperator<Direction> operator;
         public final String transName;
 
         Movable(UnaryOperator<Direction> operator) {

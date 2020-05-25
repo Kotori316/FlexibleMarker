@@ -87,7 +87,7 @@ private boolean hasGitHubToken() {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.2.0'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.2.16'
     compileOnly "org.scala-lang:scala-library:2.13.2"
     if (hasGitHubToken()) {
         implementation(fg.deobf("com.kotori316:AdditionalEnchantedMiner:14.1.8_50b3153"))

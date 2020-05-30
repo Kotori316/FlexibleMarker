@@ -6,7 +6,6 @@ import java.util.Objects;
 import com.yogpc.qp.machines.base.IMarker;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 
@@ -35,8 +34,7 @@ class FlexMarkerInstance implements IMarker {
     @Override
     public List<ItemStack> removeFromWorldWithItem() {
         Objects.requireNonNull(marker.getWorld());
-        NonNullList<ItemStack> list = NonNullList.create();
-        Block.getDrops(marker.getWorld().getBlockState(marker.getPos()), ((ServerWorld) marker.getWorld()), marker.getPos(), marker);
+        List<ItemStack> list = Block.getDrops(marker.getWorld().getBlockState(marker.getPos()), ((ServerWorld) marker.getWorld()), marker.getPos(), marker);
         marker.getWorld().removeBlock(marker.getPos(), false);
         return list;
     }

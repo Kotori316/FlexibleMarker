@@ -21,6 +21,8 @@ public class GuiMarker extends GuiContainer {
     private static final String[] downSide = {"Down"};
     private static final int[] amounts = {-16, -1, 1, 16};
     private final TileFlexMarker marker;
+    private static final int yOffsetCenter = 45;
+    private static final int yOffsetBottom = 90;
 
     public GuiMarker(EntityPlayer player, TileFlexMarker marker) {
         super(new ContainerMarker(player));
@@ -83,6 +85,26 @@ public class GuiMarker extends GuiContainer {
         fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2 + 40, 6 + 35, 0x404040);
         s = I18n.format(TileFlexMarker.Movable.DOWN.transName);
         fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6 + 70, 0x404040);
+
+        /*BlockPos minPos = this.marker.min();
+        BlockPos maxPos = this.marker.max();
+        String start = String.format("(%d, %d, %d)", minPos.getX(), minPos.getY(), minPos.getZ());
+        String end = String.format("(%d, %d, %d)", maxPos.getX(), maxPos.getY(), maxPos.getZ());
+        int x = this.xSize - Math.max(fontRenderer.getStringWidth(start), fontRenderer.getStringWidth(end)) - 10;
+        fontRenderer.drawString(start, x, 6 + yOffsetBottom + 5, 0x404040);
+        fontRenderer.drawString(end, x, 6 + yOffsetBottom + 15, 0x404040);
+
+        String distanceUp = String.valueOf(TileFlexMarker.Movable.UP.distanceFromOrigin(marker.getPos(), minPos, maxPos, marker.direction));
+        String distanceLeft = String.valueOf(TileFlexMarker.Movable.LEFT.distanceFromOrigin(marker.getPos(), minPos, maxPos, marker.direction));
+        String distanceForward = String.valueOf(TileFlexMarker.Movable.FORWARD.distanceFromOrigin(marker.getPos(), minPos, maxPos, marker.direction));
+        String distanceRight = String.valueOf(TileFlexMarker.Movable.RIGHT.distanceFromOrigin(marker.getPos(), minPos, maxPos, marker.direction));
+        String distanceDown = String.valueOf(TileFlexMarker.Movable.DOWN.distanceFromOrigin(marker.getPos(), minPos, maxPos, marker.direction));
+        fontRenderer.drawString(distanceUp, (this.xSize - fontRenderer.getStringWidth(distanceUp)) / 2, 6 + 32, 0x404040);
+        fontRenderer.drawString(distanceLeft, (this.xSize - fontRenderer.getStringWidth(distanceLeft)) / 2 - 40, 6 + 32 + yOffsetCenter, 0x404040);
+        fontRenderer.drawString(distanceForward, (this.xSize - fontRenderer.getStringWidth(distanceForward)) / 2, 6 + 32 + yOffsetCenter, 0x404040);
+        fontRenderer.drawString(distanceRight, (this.xSize - fontRenderer.getStringWidth(distanceRight)) / 2 + 40, 6 + 32 + yOffsetCenter, 0x404040);
+        fontRenderer.drawString(distanceDown, (this.xSize - fontRenderer.getStringWidth(distanceDown)) / 2, 6 + 32 + yOffsetBottom, 0x404040);
+         */
     }
 
     @Override

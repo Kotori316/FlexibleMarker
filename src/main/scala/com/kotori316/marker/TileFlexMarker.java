@@ -243,6 +243,12 @@ public class TileFlexMarker extends TileEntity implements ITileAreaProvider, IDe
         static {
             v = values();
         }
+
+        public int distanceFromOrigin(BlockPos origin, BlockPos areaMin, BlockPos areaMax, EnumFacing facing) {
+            EnumFacing actualFacing = getActualFacing(facing);
+            BlockPos relative = actualFacing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE ? areaMax : areaMin;
+            return Math.abs(getDistance(origin, relative, actualFacing.getAxis()));
+        }
     }
 
     public static int getDistance(BlockPos to, BlockPos from, EnumFacing.Axis axis) {
